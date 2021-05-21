@@ -14,6 +14,12 @@ from rdkit import RDLogger
 from .pbar import tqdm
 from .norm import Normalizer
 
+# from rdkit.Chem.Draw import IPythonConsole
+from rdkit.Chem import PyMol
+from rdkit.Chem.Subshape import SubshapeBuilder, SubshapeObjects
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 lg = RDLogger.logger()
 lg.setLevel(4)
 
@@ -21,7 +27,8 @@ lg.setLevel(4)
 __all__ = [
     'get_mols_from_smi',
     'get_aligned_mol',
-    'get_aligned_sdf'
+    'get_aligned_sdf',
+    'show_alignment',
 ]
 
 
@@ -151,3 +158,75 @@ def get_aligned_sdf(
         return out_aligned
     
     # shape-it -r ref_sdf  -d output_sdf -o out_aligned -s score_file
+
+
+def show_alignment(
+    ref_mol,
+    probe_mol,
+    gen_confs,
+    num_confs=200,
+    num_cpu=5,
+):
+    # should install pymol-open-source
+    subprocess.Popen(['pymol', '-cKRQ'])  
+
+    if isinstance(ref_mol, Chem.Mol):
+        mol1 = ref_mol
+    elif isinstance(ref_mol, str) and ref_mol.endswith('.sdf'):
+        mol1 = Chem.SDMolSupplier(ref_mol)[0]
+    
+    if isinstance(probe_mol, Chem.Mol):
+        mol2 = probe_mol
+    elif isinstance(probe_mol, str) and probe_mol.endswith('.sdf'):
+        mol2 = Chem.SDMolSupplier(probe_mol)[0]
+    else:
+        mol2 = Chem.MolFromSmiles(probe_mol)
+    
+    if gen_confs:
+        AllChem.EmbedMultipleConfs(
+            mol2,
+            numConfs=num_confs,
+            numThreads=num_cpu
+        )
+
+    score = 0
+    for i in range(mol2.GetNumConformers()):
+
+        probe_mol = Chem.MolFromMolBlock(
+            Chem.MolToMolBlock(mol2, confId=i)
+        )
+
+        sim_score = AlignMol(mol1, probe_mol)
+        if sim_score > score:
+            score = sim_score
+            probe = deepcopy(probe_mol)
+
+    mol1.SetProp('_Name', 'ref')
+    probe.SetProp('_Name', 'probe')
+
+    AllChem.CanonicalizeConformer(mol1.GetConformer())
+    AllChem.CanonicalizeConformer(probe.GetConformer())
+
+    builder = SubshapeBuilder.SubshapeBuilder()
+    builder.gridDims = (20., 20., 10)
+    builder.gridSpacing = 0.5
+    builder.winRad = 4.
+
+    refShape = builder.GenerateSubshapeShape(mol1)
+    probeShape = builder.GenerateSubshapeShape(probe)
+
+    v = PyMol.MolViewer()
+
+    score = AlignMol(mol1, probe)
+
+    v.DeleteAll()
+
+    v.ShowMol(mol1, name='ref', showOnly=False)
+    SubshapeObjects.DisplaySubshape(v, refShape, 'ref_Shape')
+    v.server.do('set transparency=0.5')
+
+    v.ShowMol(probe, name='probe', showOnly=False)
+    SubshapeObjects.DisplaySubshape(v, probeShape, 'prob_Shape')
+    v.server.do('set transparency=0.5')
+
+    return v.GetPNG()
