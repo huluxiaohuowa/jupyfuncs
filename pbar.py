@@ -1,6 +1,7 @@
 import sys
 
 __all__ = [
+    'in_jupyter',
     'tqdm',
 ]
 
