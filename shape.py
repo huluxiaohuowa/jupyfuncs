@@ -29,6 +29,7 @@ __all__ = [
     'get_aligned_mol',
     'get_aligned_sdf',
     'show_alignment',
+    'pymol_running'
 ]
 
 
@@ -168,7 +169,8 @@ def show_alignment(
     num_cpu=5,
 ):
     # should install pymol-open-source
-    subprocess.Popen(['pymol', '-cKRQ'])  
+    if not pymol_running():
+        subprocess.Popen(['pymol', '-cKRQ'])  
 
     if isinstance(ref_mol, Chem.Mol):
         mol1 = ref_mol
@@ -230,3 +232,11 @@ def show_alignment(
     v.server.do('set transparency=0.5')
 
     return v.GetPNG()
+
+
+def pymol_running():
+    out_info = subprocess.getoutput('ps aux | grep pymol')
+    if '-cKRQ' in out_info:
+        return True
+    else:
+        return False
