@@ -1,6 +1,7 @@
 # shape
 
 import os
+import subprocess
 from copy import deepcopy
 
 from rdkit import Chem
@@ -91,7 +92,8 @@ def get_aligned_sdf(
     num_confs=150,
     num_cpu=5,
     num_workers=10,
-    output_sdf=None
+    output_sdf=None,
+    print_info=True
 ):
     ref_sdf = os.path.abspath(ref_sdf)
     ref_mol = Chem.SDMolSupplier(ref_sdf)[0]
@@ -125,7 +127,10 @@ def get_aligned_sdf(
     sdwriter.close()
     
     command = f'shape-it -r {ref_sdf} -d {output_sdf} -o {out_aligned} -s {score_file}' 
-    os.system(command)
+    # os.system(command)
+    out_info = subprocess.getoutput(command)
+    if print_info:
+        print(out_info)
     return out_aligned
     
     # shape-it -r ref_sdf  -d output_sdf -o out_aligned -s score_file
