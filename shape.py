@@ -126,5 +126,6 @@ def get_aligned_sdf(
     
     command = f'shape-it -r {ref_sdf} -d {output_sdf} -o {out_aligned} -s {score_file}' 
     os.system(command)
+    return out_aligned
     
     # shape-it -r ref_sdf  -d output_sdf -o out_aligned -s score_file
