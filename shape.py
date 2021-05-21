@@ -9,10 +9,11 @@ from pyshapeit import AlignMol
 import multiprocess as mp
 
 from rdkit import RDLogger
-lg = RDLogger.logger()
-lg.setLevel(4)
 
 from .pbar import tqdm
+
+lg = RDLogger.logger()
+lg.setLevel(4)
 
 
 __all__ = [
@@ -51,7 +52,7 @@ def get_aligned_mol(
     )
 
     score = 0
-    conf_id = -1
+    # conf_id = -1
     
     aligned_mol = deepcopy(probe_mol)
 
@@ -86,7 +87,6 @@ def gen_configs(ref_mol, mols, num_confs, num_cpu):
 
 def get_aligned_sdf(
     ref_sdf: str,
-#     ref_mol: Chem.Mol,
     probe_smifile: str,
     num_confs=150,
     num_cpu=5,

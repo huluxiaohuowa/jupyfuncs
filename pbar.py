@@ -4,6 +4,7 @@ __all__ = [
     'tqdm',
 ]
 
+
 def in_jupyter():
 
     which = True if 'ipykernel_launcher.py' in sys.argv[0] else False

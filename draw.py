@@ -1,26 +1,37 @@
-#Jupyter funcs
+# Jupyter funcs
+import itertools
+from copy import deepcopy
 
 from rdkit import Chem
 from rdkit.Chem.Draw import IPythonConsole
-from rdkit.Chem import rdDepictor
+# from rdkit.Chem import rdDepictor
 from rdkit.Chem.Draw import rdMolDraw2D
 from IPython.display import SVG
 import py3Dmol
 from rdkit.Chem import AllChem
-from ipywidgets import interact, interactive, fixed
-from rdkit.Chem.rdRGroupDecomposition import RGroupDecomposition, RGroupDecompositionParameters, \
-   RGroupMatching, RGroupScore, RGroupLabels, RGroupCoreAlignment, RGroupLabelling
-import os
-from rdkit.Chem.Draw import IPythonConsole
-IPythonConsole.ipython_useSVG=True
+from ipywidgets import (
+    interact,
+    # interactive,
+    fixed,
+)
+from rdkit.Chem.rdRGroupDecomposition import (
+    RGroupDecomposition,
+    # RGroupDecompositionParameters,
+    # RGroupMatching,
+    # RGroupScore,
+    # RGroupLabels,
+    # RGroupCoreAlignment,
+    RGroupLabelling
+)
 import pandas as pd
 from rdkit.Chem import PandasTools
 from rdkit.Chem import Draw
 from IPython.display import HTML
-from rdkit import rdBase
-from rdkit.Chem import Draw
+# from rdkit import rdBase
 from IPython.display import display
-from copy import deepcopy
+
+
+IPythonConsole.ipython_useSVG = True
 
 
 __all__ = [
@@ -32,59 +43,73 @@ __all__ = [
     'mol_without_indices',
 ]
 
+
 def show_atom_number(mol, label='atomNote'):
     new_mol = deepcopy(mol)
     for atom in new_mol.GetAtoms():
         atom.SetProp(label, str(atom.GetIdx()))
     return new_mol
 
-def moltosvg(mol, molSize = (500,500), kekulize = True):
+
+def moltosvg(mol, molSize=(500, 500), kekulize=True):
     mc = mol
-    drawer = rdMolDraw2D.MolDraw2DSVG(molSize[0],molSize[1])
+    drawer = rdMolDraw2D.MolDraw2DSVG(molSize[0], molSize[1])
     drawer.DrawMolecule(mc)
     drawer.FinishDrawing()
     svg = drawer.GetDrawingText()
-    return svg.replace('svg:','')
+    return svg.replace('svg:', '')
+
 
 def draw_mol(mol):
     return SVG(moltosvg(show_atom_number(mol)))
 
+
 def drawit(m, p, confId=-1):
     mb = Chem.MolToMolBlock(m, confId=confId)
     p.removeAllModels()
-    p.addModel(mb,'sdf')
-    p.setStyle({'stick':{}})
+    p.addModel(mb, 'sdf')
+    p.setStyle({'stick': {}})
     p.setBackgroundColor('0xeeeeee')
     p.zoomTo()
     return p.show()
 
+
 def draw_confs(m):
-    p = py3Dmol.view(width=500,height=500)
-    return interact(drawit, m=fixed(m),p=fixed(p),confId=(0, m.GetNumConformers()-1))
+    p = py3Dmol.view(width=500, height=500)
+    return interact(drawit,
+                    m=fixed(m),
+                    p=fixed(p),
+                    confId=(0, m.GetNumConformers() - 1))
+
 
 def do_decomp(mols, cores, options):
-#     options.removeHydrogensPostMatch = True
     options.rgroupLabelling = RGroupLabelling.AtomMap
     decomp = RGroupDecomposition(cores, options)
     for mol in mols:
         decomp.Add(mol)
-#         print(Chem.MolToSmiles(mol))
     decomp.Process()
     return decomp
+
 
 def show_decomp(mols, cores, options, item=False):
     decomp = do_decomp(mols, cores, options)
     if item:
-        rows = decomp.GetRGroupsAsRows();
-        items=['{}:{}'.format(group, Chem.MolToSmiles(row[group])) for row in rows for group in row]
+        rows = decomp.GetRGroupsAsRows()
+        items = [
+            '{}:{}'.format(
+                group, Chem.MolToSmiles(row[group])
+            )
+            for row in rows for group in row
+        ]
         return ' '.join(items)
     else:
         cols = decomp.GetRGroupsAsColumns()
         cols['mol'] = mols
         cols['input core'] = cores[0]
-        df = pd.DataFrame(cols);
+        df = pd.DataFrame(cols)
         PandasTools.ChangeMoleculeRendering(df)
         return HTML(df.to_html())
+
 
 def get_ids_folds(id_list, num_folds, need_shuffle=False):
     if need_shuffle:
@@ -115,7 +140,9 @@ def get_ids_folds(id_list, num_folds, need_shuffle=False):
     return id_blocks
 
 
-keep = ["Donor", "Acceptor","Aromatic", "Hydrophobe", "LumpedHydrophobe"]
+keep = ["Donor", "Acceptor", "Aromatic", "Hydrophobe", "LumpedHydrophobe"]
+
+
 def show_pharmacophore(
     sdf_path,
     keep=keep,
@@ -127,7 +154,7 @@ def show_pharmacophore(
     )
     prob_feats = fdef.GetFeaturesForMol(template_mol)
     prob_feats = [f for f in prob_feats if f.GetFamily() in keep]
-    prob_points = [list(x.GetPos()) for x in prob_feats]
+    # prob_points = [list(x.GetPos()) for x in prob_feats]
 
     for i, feat in enumerate(prob_feats):
         atomids = feat.GetAtomIds()
@@ -143,7 +170,7 @@ def show_pharmacophore(
             Draw.MolToImage(
                 template_mol,
                 highlightAtoms=list(atomids),
-                highlightColor=[0,1,0],
+                highlightColor=[0, 1, 0],
                 useSVG=True
             )
         )
@@ -229,14 +256,14 @@ def mol_without_indices(
                 and (bond_info[1] not in remove_indices) 
             ): 
                 keep_index = bond_info[1] 
-                remove_index = bond_info[0] 
+                # remove_index = bond_info[0] 
                 one_in = True 
             elif ( 
                 (bond_info[1] in remove_indices) 
                 and (bond_info[0] not in remove_indices) 
             ): 
                 keep_index = bond_info[0] 
-                remove_index = bond_info[1] 
+                # remove_index = bond_info[1] 
                 one_in = True 
             if one_in:  
                 if atom_list[keep_index][0] == 'N': 
