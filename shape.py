@@ -12,6 +12,7 @@ import multiprocess as mp
 from rdkit import RDLogger
 
 from .pbar import tqdm
+from .norm import Normalizer
 
 lg = RDLogger.logger()
 lg.setLevel(4)
@@ -93,7 +94,8 @@ def get_aligned_sdf(
     num_cpu=5,
     num_workers=10,
     output_sdf=None,
-    print_info=True
+    print_info=True,
+    norm_mol=True
 ):
     ref_sdf = os.path.abspath(ref_sdf)
     ref_mol = Chem.SDMolSupplier(ref_sdf)[0]
@@ -119,9 +121,12 @@ def get_aligned_sdf(
             desc='All mols'
         )
     )
-    
+    if norm_mol:
+        normer = Normalizer()
     sdwriter = Chem.SDWriter(output_sdf) 
     for mol in aligned_mols:
+        if norm_mol:
+            mol = normer(mol)
         sdwriter.write(mol)
         sdwriter.flush()
     sdwriter.close()
@@ -131,6 +136,18 @@ def get_aligned_sdf(
     out_info = subprocess.getoutput(command)
     if print_info:
         print(out_info)
-    return out_aligned
+    
+    if norm_mol:
+        fix_path = out_aligned + 'fix.sdf'
+        mols = Chem.SDMolSupplier(out_aligned)
+        sdwriter = Chem.SDWriter(fix_path)
+        for mol in mols:
+            mol = normer(mol)
+            sdwriter.write(mol)
+            sdwriter.flush()
+        sdwriter.close()
+        return fix_path
+    else:
+        return out_aligned
     
     # shape-it -r ref_sdf  -d output_sdf -o out_aligned -s score_file
