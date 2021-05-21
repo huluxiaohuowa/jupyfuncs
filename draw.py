@@ -1,4 +1,5 @@
 # Jupyter funcs
+import os
 import itertools
 from copy import deepcopy
 
@@ -146,7 +147,10 @@ keep = ["Donor", "Acceptor", "Aromatic", "Hydrophobe", "LumpedHydrophobe"]
 def show_pharmacophore(
     sdf_path,
     keep=keep,
-    fdf_dir='/data/aidd-server/trained_models/defined_BaseFeatures.fdef'
+    fdf_dir=os.path.join(
+        os.path.dirname(__file__),
+        'defined_BaseFeatures.fdef'
+    )
 ):
     template_mol = [m for m in Chem.SDMolSupplier(sdf_path)][0]
     fdef = AllChem.BuildFeatureFactory(
