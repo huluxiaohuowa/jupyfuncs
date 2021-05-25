@@ -6,12 +6,11 @@ __all__ = [
     'tqdm',
     'trange',
     'tnrange',
-    'no_white',
+    'NO_WHITE',
 ]
 
 
-def no_white():
-    return HTML("""
+NO_WHITE = HTML("""
     <style>
     .jp-OutputArea-prompt:empty {
     padding: 0;
@@ -19,7 +18,6 @@ def no_white():
     }
     </style>
     """)
-
 
 
 def in_jupyter():
