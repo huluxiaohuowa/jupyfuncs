@@ -3,6 +3,8 @@ import sys
 __all__ = [
     'in_jupyter',
     'tqdm',
+    'trange',
+    'tnrange',
 ]
 
 
@@ -14,5 +16,9 @@ def in_jupyter():
 
 if in_jupyter():
     from tqdm.notebook import tqdm
+    from tqdm.notebook import trange
+    from tqdm.notebook import tnrange
 else:
     from tqdm import tqdm
+    from tqdm import trange
+    from tqdm import tnrange
