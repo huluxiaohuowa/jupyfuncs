@@ -1,11 +1,25 @@
 import sys
+from IPython.core.display import HTML
 
 __all__ = [
     'in_jupyter',
     'tqdm',
     'trange',
     'tnrange',
+    'no_white',
 ]
+
+
+def no_white():
+    return HTML("""
+    <style>
+    .jp-OutputArea-prompt:empty {
+    padding: 0;
+    border: 0;
+    }
+    </style>
+    """)
+
 
 
 def in_jupyter():
