@@ -50,7 +50,7 @@ class Normalization(object):
         return self.name
 
 
-NORMALIZATIONS = (
+NORMALIZATIONS = [
     Normalization(
         "Nitro to N+(O-)=O",
         "[*:1][N,P,As,Sb:2](=[O,S,Se,Te:3])=[O,S,Se,Te:4]>>[*:1][*+1:2]([*-1:3])=[*:4]",
@@ -135,37 +135,64 @@ NORMALIZATIONS = (
         "Normalize 1,5 conjugated cation",
         "[n;+0!H0:1]:[a:2]:[a:3]:[a:4]:[n!$(*[O-]);+1H0:5]>>[n+1:1]:[*:2]:[*:3]:[*:4]:[n+0:5]",
     ),
-    Normalization("Charge normalization", "[F,Cl,Br,I,At;-1:1]=[O:2]>>[*-0:1][O-:2]"),
+    Normalization(
+        "Charge normalization",
+        "[F,Cl,Br,I,At;-1:1]=[O:2]>>[*-0:1][O-:2]"),
     Normalization(
         "Charge recombination", "[N,P,As,Sb;-1:1]=[C+;v3:2]>>[*+0:1]#[C+0:2]"
     ),
-    Normalization("Nitro to N+(O-)=O",	"[N;X3:1](=[O:2])=[O:3]>>[*+1:1]([*-1:2])=[*:3]"),
-    Normalization("Diazonium N",	"[*:1]-[N;X2:2]#[N;X1:3]>>[*:1]-[*+1:2]#[*:3]",
+    Normalization(
+        "Nitro to N+(O-)=O",
+        "[N;X3:1](=[O:2])=[O:3]>>[*+1:1]([*-1:2])=[*:3]"),
+    Normalization(
+        "Diazonium N",
+        "[*:1]-[N;X2:2]#[N;X1:3]>>[*:1]-[*+1:2]#[*:3]",
     ),
-    Normalization("Quaternary N",	"[N;X4;v4;+0:1]>>[*+1:1]",
+    Normalization(
+        "Quaternary N",
+        "[N;X4;v4;+0:1]>>[*+1:1]",
     ),
-    Normalization("Trivalent O",	"[*:1]=[O;X2;v3;+0:2]-[#6:3]>>[*:1]=[*+1:2]-[*:3]",
+    Normalization(
+        "Trivalent O",
+        "[*:1]=[O;X2;v3;+0:2]-[#6:3]>>[*:1]=[*+1:2]-[*:3]",
     ),
-    Normalization("Sulfoxide to -S+(O-)",	"[!O:1][S+0;D3:2](=[O:3])[!O:4]>>[*:1][S+1:2]([O-:3])[*:4]",
+    Normalization(
+        "Sulfoxide to -S+(O-)",
+        "[!O:1][S+0;D3:2](=[O:3])[!O:4]>>[*:1][S+1:2]([O-:3])[*:4]",
+    ),
+    Normalization(
+        "Sulfoxide to -S+(O-) 2",
+        "[!O:1][SH1+1;D3:2](=[O:3])[!O:4]>>[*:1][S+1:2]([O-:3])[*:4]",
+    ),
+    Normalization(
+        "Trivalent S",
+        "[O:1]=[S;D2;+0:2]-[#6:3]>>[*:1]=[*+1:2]-[*:3]",
     ),
 
-    Normalization("Sulfoxide to -S+(O-) 2",	"[!O:1][SH1+1;D3:2](=[O:3])[!O:4]>>[*:1][S+1:2]([O-:3])[*:4]",
+    Normalization(
+        "Bad amide tautomer1",
+        "[C:1]([OH1;D1:2])=;!@[NH1:3]>>[C:1](=[OH0:2])-[NH2:3]",
     ),
-    Normalization("Trivalent S", "[O:1]=[S;D2;+0:2]-[#6:3]>>[*:1]=[*+1:2]-[*:3]",
+    Normalization(
+        "Bad amide tautomer2",
+        "[C:1]([OH1;D1:2])=;!@[NH0:3]>>[C:1](=[OH0:2])-[NH1:3]",
     ),
-
-    Normalization("Bad amide tautomer1",	"[C:1]([OH1;D1:2])=;!@[NH1:3]>>[C:1](=[OH0:2])-[NH2:3]",
+    Normalization(
+        "Halogen with no neighbors", "[F,Cl,Br,I;X0;+0:1]>>[*-1:1]",
     ),
-    Normalization("Bad amide tautomer2",	"[C:1]([OH1;D1:2])=;!@[NH0:3]>>[C:1](=[OH0:2])-[NH1:3]",
+    Normalization(
+        "Odd pyridine/pyridazine oxide structure",
+        "[C,N;-;D2,D3:1]-[N+2;D3:2]-[O-;D1:3]>>[*-0:1]=[*+1:2]-[*-:3]",
     ),
-    Normalization("Halogen with no neighbors",	"[F,Cl,Br,I;X0;+0:1]>>[*-1:1]",
+    Normalization(
+        "qunimade2",
+        "[n&H0:1][n&H1:2][n&H1,c;R2:3][c&H1,n&H1:4][c,n&H1:5](=[S,N,O:7])[n&H1:6]>>[n&H0:1][n&H1:2][n&H0,c;R2:3][c&H1,n&H0:4][c,n&H0:5]([S,N,O:7])[n&H0:6]"
     ),
-    Normalization("Odd pyridine/pyridazine oxide structure", "[C,N;-;D2,D3:1]-[N+2;D3:2]-[O-;D1:3]>>[*-0:1]=[*+1:2]-[*-:3]",
+    Normalization(
+        "qunimade",
+        "[c,n&H0,n&H1:2][n&H0,n&H1,c:3][c,n&H0,n&H1:4][c,n&H0,n&H1:5](=[S,N,O:1])>>[c,n&H0:2][n&H0,c:3][c,n&H0:4][c,n&H0:5]([S,N,O:1])"
     ),
-    Normalization("qunimade2", "[n&H0:1][n&H1:2][n&H1,c;R2:3][c&H1,n&H1:4][c,n&H1:5](=[S,N,O:7])[n&H1:6]>>[n&H0:1][n&H1:2][n&H0,c;R2:3][c&H1,n&H0:4][c,n&H0:5]([S,N,O:7])[n&H0:6]"),
-    Normalization("qunimade", "[c,n&H0,n&H1:2][n&H0,n&H1,c:3][c,n&H0,n&H1:4][c,n&H0,n&H1:5](=[S,N,O:1])>>[c,n&H0:2][n&H0,c:3][c,n&H0:4][c,n&H0:5]([S,N,O:1])"),
-)
-
+]
 
 
 class Normalizer(object):
@@ -216,7 +243,6 @@ class Normalizer(object):
             if product:
                 mol = product
         return mol
-
 
     def _apply_transform(self, mol, rule):
         """Repeatedly apply normalization transform to molecule until no changes occur.
