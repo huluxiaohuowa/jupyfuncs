@@ -10,6 +10,8 @@ log = logging.getLogger(__name__)
 
 __all__ = [
     "Normalizer",
+    "Normalization",
+    "NORMALIZATIONS",
 ]
 
 
