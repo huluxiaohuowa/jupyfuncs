@@ -2,6 +2,8 @@
 import os
 import itertools
 from copy import deepcopy
+from collections import defaultdict
+import itertools
 
 from rdkit import Chem
 from rdkit.Chem.Draw import IPythonConsole
@@ -31,9 +33,26 @@ from IPython.display import HTML
 # from rdkit import rdBase
 from IPython.display import display
 
+from rdkit import Chem
+from rdkit.Chem import Draw
+from rdkit.Chem.Draw import IPythonConsole
+from rdkit.Chem import rdRGroupDecomposition
+from rdkit.Chem import rdqueries
+from rdkit.Chem import rdDepictor
+from rdkit.Chem.Draw import rdMolDraw2D
+from rdkit import Geometry
+rdDepictor.SetPreferCoordGen(True)
+import pandas as pd
+from PIL import Image as pilImage
+from io import BytesIO
+from IPython.display import SVG, Image
+from ipywidgets import interact
+
 
 IPythonConsole.ipython_useSVG = True
-
+IPythonConsole.molSize = (450, 350)
+params = Chem.SubstructMatchParameters()
+params.aromaticMatchesConjugated = True 
 
 __all__ = [
     'draw_mol',
@@ -42,7 +61,108 @@ __all__ = [
     'get_ids_folds',
     'show_pharmacophore',
     'mol_without_indices',
+    'norm_colors',
+    'drawmol_with_hi',
 ]
+
+
+COLORS = {
+    # "Tol" colormap from https://davidmathlogic.com/colorblind
+    'tol': [
+        (51, 34, 136),
+        (17, 119, 51),
+        (68, 170, 153),
+        (136, 204, 238),
+        (221, 204, 119),
+        (204, 102, 119),
+        (170, 68, 153),
+        (136, 34, 85)
+    ],
+    # "IBM" colormap from https://davidmathlogic.com/colorblind
+    'ibm': [
+        (100, 143, 255),
+        (120, 94, 240),
+        (220, 38, 127),
+        (254, 97, 0),
+        (255, 176, 0)
+    ],
+    # Okabe_Ito colormap from https://jfly.uni-koeln.de/color/
+    'okabe': [
+        (230, 159, 0),
+        (86, 180, 233),
+        (0, 158, 115),
+        (240, 228, 66),
+        (0, 114, 178),
+        (213, 94, 0),
+        (204, 121, 167)
+    ]
+}
+
+
+# def get_his_for_onemol(mol_sm, pat_sm):
+#     atom_ids = []
+#     bond_ids = []
+#     m = Chem.MolFromSmiles(mol_sm)
+#     pt = Chem.MolFromSmiles(pat_sm)
+#     hi_id = m.GetSubstructMatches(pt, params=params)
+#     if len(m.GetSubstructMatches(pt, params=params)) == 0:
+#         Chem.Kekulize(m)       
+#         hi_id = m.GetSubstructMatches(pt, params=params) 
+#     if len(hi_id) == 0:
+#         return
+#     atom_ids.append(itertools.chain.from_iterable(hi_id))
+
+
+# def get_match_his(mol_sms, pat_sms):
+#     highlightatoms = defaultdict(list)
+#     highlightbonds = defaultdict(list)
+#     for i in range(len(df)):
+#         try:
+#             mm = df.iloc[i, 0][2:-2]
+#             pm = df.iloc[i, 2]
+#             m = Chem.MolFromSmiles(mm) 
+#             pt = Chem.MolFromSmiles(pm)
+#             hi_id = m.GetSubstructMatches(pt, params=params)
+#             if len(m.GetSubstructMatches(pt, params=params)) == 0:
+#                 Chem.Kekulize(m)       
+#                 hi_id = m.GetSubstructMatches(pt, params=params)
+#             mols.append(m)
+#             hi_ids.append(hi_id)
+#         except:
+#             pass
+#         pass
+
+
+def norm_colors(colors=COLORS):
+    colors = deepcopy(COLORS)
+    for k, v in colors.items():
+        for i, color in enumerate(v):
+            colors[k][i] = tuple(y / 255 for y in color)
+    return colors
+
+
+def drawmol_with_hi(
+    mol,
+    legend,
+    atom_hi_dict,
+    bond_hi_dict,
+    atomrads_dict,
+    widthmults_dict,
+    width=350,
+    height=200,
+):
+    d2d = rdMolDraw2D.MolDraw2DCairo(width, height)
+    d2d.ClearDrawing()
+    d2d.DrawMoleculeWithHighlights(
+        mol, legend, 
+        atom_hi_dict,
+        bond_hi_dict, 
+        atomrads_dict,
+        widthmults_dict
+    )
+    d2d.FinishDrawing()
+    png = d2d.GetDrawingText()
+    return png
 
 
 def show_atom_number(mol, label='atomNote'):
