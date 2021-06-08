@@ -7,6 +7,8 @@ import itertools
 
 from rdkit import Chem
 from rdkit.Chem.Draw import IPythonConsole
+import py3Dmol
+from rdkit.Chem.Draw.IPythonConsole import addMolToView
 # from rdkit.Chem import rdDepictor
 from rdkit.Chem.Draw import rdMolDraw2D
 from IPython.display import SVG
@@ -63,6 +65,7 @@ __all__ = [
     'mol_without_indices',
     'norm_colors',
     'drawmol_with_hi',
+    'draw_mols_surfs',
 ]
 
 
@@ -400,3 +403,16 @@ def mol_without_indices(
                     ) 
     mol = Chem.Mol(mol) 
     return mol
+
+
+def draw_mols_surfs(mols, width=400, height=400):
+
+    view = py3Dmol.view(width=width, height=height)
+    view.setBackgroundColor('0xeeeeee')
+    view.removeAllModels()
+    for mol in mols:
+        addMolToView(mol, view)
+
+    view.addSurface(py3Dmol.SAS, {'opacity': 0.5})
+    view.zoomTo()
+    view.show()
