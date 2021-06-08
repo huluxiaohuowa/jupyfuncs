@@ -424,4 +424,4 @@ def draw_mols_surfs(
             {'opacity': surface_opacity}
         )
     view.zoomTo()
-    view.show()
+    return view.show()
