@@ -138,25 +138,25 @@ def get_aligned_sdf(
         sdwriter.write(mol)
         sdwriter.flush()
     sdwriter.close()
+    return output_sdf
     
-    command = f'shape-it -r {ref_sdf} -d {output_sdf} -o {out_aligned} -s {score_file}' 
-    # os.system(command)
-    out_info = subprocess.getoutput(command)
-    if print_info:
-        print(out_info)
+    # command = f'shape-it -r {ref_sdf} -d {output_sdf} -o {out_aligned} -s {score_file}' 
+    # out_info = subprocess.getoutput(command)
+    # if print_info:
+    #     print(out_info)
     
-    if norm_mol:
-        fix_path = out_aligned + 'fix.sdf'
-        mols = Chem.SDMolSupplier(out_aligned)
-        sdwriter = Chem.SDWriter(fix_path)
-        for mol in mols:
-            mol = normer(mol)
-            sdwriter.write(mol)
-            sdwriter.flush()
-        sdwriter.close()
-        return fix_path
-    else:
-        return out_aligned
+    # if norm_mol:
+    #     fix_path = out_aligned + 'fix.sdf'
+    #     mols = Chem.SDMolSupplier(out_aligned)
+    #     sdwriter = Chem.SDWriter(fix_path)
+    #     for mol in mols:
+    #         mol = normer(mol)
+    #         sdwriter.write(mol)
+    #         sdwriter.flush()
+    #     sdwriter.close()
+    #     return fix_path
+    # else:
+    #     return out_aligned
     
     # shape-it -r ref_sdf  -d output_sdf -o out_aligned -s score_file
 
