@@ -111,10 +111,7 @@ def get_aligned_sdf(
         output_sdf = os.path.abspath(probe_smifile) + '.sdf'
     else:
         output_sdf = os.path.abspath(output_sdf)
-    
-    out_aligned = output_sdf + 'ali.sdf'
-    score_file = output_sdf + 'score.csv'
-    
+
     mols = get_mols_from_smi(probe_smifile)
 
     configs = gen_configs(
@@ -139,6 +136,9 @@ def get_aligned_sdf(
         sdwriter.flush()
     sdwriter.close()
     return output_sdf
+
+    # out_aligned = output_sdf + 'ali.sdf'
+    # score_file = output_sdf + 'score.csv'
     
     # command = f'shape-it -r {ref_sdf} -d {output_sdf} -o {out_aligned} -s {score_file}' 
     # out_info = subprocess.getoutput(command)

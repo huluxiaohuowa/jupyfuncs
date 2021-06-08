@@ -405,14 +405,14 @@ def mol_without_indices(
     return mol
 
 
-def draw_mols_surfs(mols, width=400, height=400):
+def draw_mols_surfs(mols, width=400, height=400, surface=True):
 
     view = py3Dmol.view(width=width, height=height)
     view.setBackgroundColor('0xeeeeee')
     view.removeAllModels()
     for mol in mols:
         addMolToView(mol, view)
-
-    view.addSurface(py3Dmol.SAS, {'opacity': 0.5})
+    if surface:
+        view.addSurface(py3Dmol.SAS, {'opacity': 0.5})
     view.zoomTo()
     view.show()
