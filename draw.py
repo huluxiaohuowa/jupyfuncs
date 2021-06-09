@@ -2,8 +2,7 @@
 import os
 import itertools
 from copy import deepcopy
-from collections import defaultdict
-import itertools
+# from collections import defaultdict
 
 from rdkit import Chem
 from rdkit.Chem.Draw import IPythonConsole
@@ -12,7 +11,6 @@ from rdkit.Chem.Draw.IPythonConsole import addMolToView
 # from rdkit.Chem import rdDepictor
 from rdkit.Chem.Draw import rdMolDraw2D
 from IPython.display import SVG
-import py3Dmol
 from rdkit.Chem import AllChem
 from ipywidgets import (
     interact,
