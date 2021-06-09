@@ -28,7 +28,7 @@ def get_maccs_fp(smiles):
 
 def get_morgan_fp(smiles):
     mol = Chem.MolFromSmiles(smiles)
-    vec = AllChem.GetMorganFingerprintAsBitVect(mol, 2, nBits = 1024)
+    vec = AllChem.GetMorganFingerprintAsBitVect(mol, 2, nBits=1024)
     bv = list(vec.GetOnBits())
     arr = np.zeros(1024)
     arr[bv] = 1
