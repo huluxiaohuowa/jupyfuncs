@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 from torch_sparse import spspmm
 
 
@@ -25,3 +26,17 @@ def spmmsp(
         values,
         torch.Size([m, n])
     )
+
+
+def label_to_onehot(ls, class_num):
+    ls = ls.reshape(-1, 1)
+    return torch.zeros(
+        (len(ls), class_num), device=ls.device
+    ).scatter_(1, ls, 1)
+
+
+def onehot_to_label(tensor):
+    if isinstance(tensor, torch.Tensor):
+        return torch.argmax(tensor, dim=-1)
+    elif isinstance(tensor, np.ndarray):
+        return np.argmax(tensor, axis=-1)
