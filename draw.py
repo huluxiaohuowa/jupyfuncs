@@ -33,7 +33,6 @@ from IPython.display import HTML
 # from rdkit import rdBase
 from IPython.display import display
 
-from rdkit import Chem
 from rdkit.Chem import Draw
 from rdkit.Chem.Draw import IPythonConsole
 from rdkit.Chem import rdRGroupDecomposition
