@@ -4,6 +4,8 @@ import fnmatch
 
 __all__ = [
     'recursive_glob',
+    'makedirs',
+    'get_current_dir',
 ]
 
 
