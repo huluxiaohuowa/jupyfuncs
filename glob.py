@@ -1,4 +1,5 @@
 import os
+import inspect
 import fnmatch
 
 __all__ = [
@@ -28,3 +29,7 @@ def makedirs(path: str, isfile: bool = False) -> None:
         path = os.path.dirname(path)
     if path != '':
         os.makedirs(path, exist_ok=True)
+
+
+def get_current_dir():
+    return os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
