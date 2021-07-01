@@ -40,3 +40,13 @@ def onehot_to_label(tensor):
         return torch.argmax(tensor, dim=-1)
     elif isinstance(tensor, np.ndarray):
         return np.argmax(tensor, axis=-1)
+
+
+def get_dist_matrix(
+    a: np.array, b: np.array
+):
+    aSumSquare = np.sum(np.square(a), axis=1);
+    bSumSquare = np.sum(np.square(b), axis=1);
+    mul = np.dot(a, b.T);
+    dists = np.sqrt(aSumSquare[:, np.newaxis] + bSumSquare - 2 * mul)
+    return dists
