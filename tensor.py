@@ -45,8 +45,8 @@ def onehot_to_label(tensor):
 def get_dist_matrix(
     a: np.array, b: np.array
 ):
-    aSumSquare = np.sum(np.square(a), axis=1);
-    bSumSquare = np.sum(np.square(b), axis=1);
-    mul = np.dot(a, b.T);
+    aSumSquare = np.sum(np.square(a), axis=1)
+    bSumSquare = np.sum(np.square(b), axis=1)
+    mul = np.dot(a, b.T)
     dists = np.sqrt(aSumSquare[:, np.newaxis] + bSumSquare - 2 * mul)
     return dists
