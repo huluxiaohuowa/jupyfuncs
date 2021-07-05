@@ -1,6 +1,7 @@
 import os
 import inspect
 import fnmatch
+import linecache
 
 __all__ = [
     'recursive_glob',
@@ -35,3 +36,33 @@ def makedirs(path: str, isfile: bool = False) -> None:
 
 def get_current_dir():
     return os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+
+
+def get_num_lines(
+    input_file: str
+) -> int:
+    """Get num_of_lines of a text file
+    Args:
+        input_file (str): location of the file
+    Returns:
+        int: num_lines of the file
+    Examples:
+        >>> get_num_lines("./dataset.txt")
+    """
+    for num_lines, line in enumerate(open(input_file, 'r')):
+        pass
+    return num_lines + 1
+
+
+def str_from_line(
+    file: str,
+    idx: int
+) -> str:
+    """
+    Get string from a specific line
+    Args:
+        idx (int): index of line
+        file (string): location of a file
+    Returns:
+    """
+    return linecache.getline(file, idx + 1).strip()
