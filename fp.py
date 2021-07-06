@@ -18,11 +18,14 @@ def get_rdnorm_fp(smiles):
 
 
 def get_maccs_fp(smiles):
-    mol = Chem.MolFromSmiles(smiles)
-    vec = MACCSkeys.GenMACCSKeys(mol)
-    bv = list(vec.GetOnBits())
     arr = np.zeros(167)
-    arr[bv] = 1
+    try:
+        mol = Chem.MolFromSmiles(smiles)
+        vec = MACCSkeys.GenMACCSKeys(mol)
+        bv = list(vec.GetOnBits())
+        arr[bv] = 1
+    except Exception as e:
+        print(e)
     return arr
 
 
