@@ -55,7 +55,7 @@ def margin_conf_unc(prob_array: np.array) -> np.array:
     """
     probs = deepcopy(prob_array)
     probs.sort(-1)
-    diffs = probs[:, -1] - probs[..., -2]
+    diffs = probs[..., -1] - probs[..., -2]
     return 1 - diffs
 
 
@@ -72,7 +72,7 @@ def ratio_conf_unc(prob_array: np.array) -> np.array:
     """
     probs = deepcopy(prob_array)
     probs.sort(-1)
-    ratio = probs[..., -1] / probs[:, -2]
+    ratio = probs[..., -1] / probs[..., -2]
     return ratio
 
 
@@ -106,5 +106,5 @@ unc_dict = {
 
 
 def get_prob_unc(prob_array: np.array, unc: str) -> np.array:
-    return unc_dict[unc](prob_array) 
+    return unc_dict[unc](prob_array)
 
