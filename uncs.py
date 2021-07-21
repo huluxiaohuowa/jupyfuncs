@@ -107,4 +107,3 @@ unc_dict = {
 
 def get_prob_unc(prob_array: np.array, unc: str) -> np.array:
     return unc_dict[unc](prob_array)
-
