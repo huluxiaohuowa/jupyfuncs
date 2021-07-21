@@ -34,8 +34,10 @@ def get_metrics_curves(
     metric='accuracy',
     log_file='metrics.log',
     label: str = 'training_size',
-    save_dir: str = './metric.png',
+    save_dir: str = None,
 ):
+    if not save_dir:
+        save_dir = osp.join(base_dir, 'metrics.png')
     data_dict = {}
     for ckpt in ckpts:
         log = osp.join(
