@@ -9,8 +9,22 @@ import pandas as pd
 
 from .glob import get_num_lines, str_from_line
 
-cm = matplotlib.cm.get_cmap('Paired')
+cm = matplotlib.cm.get_cmap('tab20')
 colors = cm.colors
+
+
+def accuracies_heat(y_true, y_pred, num_tasks):
+    assert len(y_true) == len(y_pred)
+    cm = sklearn.metrics.confusion_matrix(
+        y_true, y_pred, normalize='true'
+    )
+    df_cm = pd.DataFrame(
+        cm, range(num_tasks), range(num_tasks)
+    )
+    plt.figure(figsize=(10, 10))
+    sn.set(font_scale=1.4) 
+    sn.heatmap(df_cm, annot=True, annot_kws={"size": 16}, fmt='.2f')
+
 
 def get_metrics_curves(
     base_dir,
