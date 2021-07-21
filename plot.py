@@ -3,11 +3,14 @@ from os import path as osp
 import seaborn as sn
 import sklearn
 import matplotlib.pyplot as plt
+import matplotlib
 import numpy as np
 import pandas as pd
 
 from .glob import get_num_lines, str_from_line
 
+cm = matplotlib.cm.get_cmap('Paired')
+colors = cm.colors
 
 def get_metrics_curves(
     base_dir,
@@ -50,9 +53,9 @@ def get_metrics_curves(
     plt.figure(figsize=(10, 6), dpi=300)
     # plt.style.use('ggplot')
     plt.title(title)
-    for ckpt, points in data_dict.items():
+    for i, (ckpt, points) in enumerate(data_dict.items()):
         points_array = np.array(points).T
-        plt.plot(points_array[0], points_array[1], label=ckpt)
+        plt.plot(points_array[0], points_array[1], label=ckpt, color=colors[i])
     plt.legend(loc='lower right')
     plt.xlabel(
         label
