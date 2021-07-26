@@ -234,7 +234,7 @@ def show_alignment(
     return v.GetPNG()
 
 
-def pymol_running():
+def pymol_running() -> bool:
     out_info = subprocess.getoutput('ps aux | grep pymol')
     if '-cKRQ' in out_info:
         return True

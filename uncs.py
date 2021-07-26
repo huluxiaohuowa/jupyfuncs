@@ -22,13 +22,14 @@ __all__ = [
 def least_conf_unc(prob_array: np.ndarray) -> np.ndarray:
     """Least confidence uncertainty
 
+    .. math::
+        \phi_{L C}(x)=\left(1-P_{\theta}\left(y^{*} \mid x\right)\right) \times \frac{n}{n-1}
+
     Args:
         prob_array (np.array): a 1D or 2D array of probabilities
-        ..math::
-            \phi_{L C}(x)=\left(1-P_{\theta}\left(y^{*} \mid x\right)\right) \times \frac{n}{n-1}
-
+ 
     Returns:
-        np.array: the uncertainty value(s)
+        np.ndarray: the uncertainty value(s)
     """
     if prob_array.ndim == 1:
         indices = prob_array.argmax()
@@ -45,10 +46,11 @@ def least_conf_unc(prob_array: np.ndarray) -> np.ndarray:
 def margin_conf_unc(prob_array: np.ndarray) -> np.ndarray:
     """The margin confidence uncertainty
 
+    .. math:: 
+        \phi_{M C}(x)=1-\left(P_{\theta}\left(y_{1}^{*} \mid x\right)-P_{\theta}\left(y_{2}^{*} \mid x\right)\right)
+
     Args:
-        prob_array (np.array): a 1D or 2D probability array from an NN.
-        ..math:: 
-            \phi_{M C}(x)=1-\left(P_{\theta}\left(y_{1}^{*} \mid x\right)-P_{\theta}\left(y_{2}^{*} \mid x\right)\right)
+        prob_array (np.array): a 1D or 2D probability array from an NN.  
 
     Returns:
         np.array: the uncertainty value(s)
@@ -62,10 +64,11 @@ def margin_conf_unc(prob_array: np.ndarray) -> np.ndarray:
 def ratio_conf_unc(prob_array: np.ndarray) -> np.ndarray:
     """Ratio based uncertainties
 
+    .. math::
+            \phi_{R C}(x)=P_{\theta}\left(y_{2}^{*} \mid x\right) / P_{\theta}\left(y_{1}^{*} \mid x\right)
+
     Args:
         prob_array (np.array): a 1D or 2D probability array
-        ..math::
-            \phi_{R C}(x)=P_{\theta}\left(y_{2}^{*} \mid x\right) / P_{\theta}\left(y_{1}^{*} \mid x\right)
 
     Returns:
         np.array: the uncertainty value(s)
@@ -79,10 +82,11 @@ def ratio_conf_unc(prob_array: np.ndarray) -> np.ndarray:
 def entropy_unc(prob_array: np.ndarray) -> np.ndarray:
     """Entropy based uncertainty
 
+    .. math::
+        \phi_{E N T}(x)=\frac{-\Sigma_{y} P_{\theta}(y \mid x) \log _{2} P_{\theta}(y \mid x)}{\log _{2}(n)}
+
     Args:
         prob_array (np.array): a 1D or 2D probability array
-        ..math::
-            \phi_{E N T}(x)=\frac{-\Sigma_{y} P_{\theta}(y \mid x) \log _{2} P_{\theta}(y \mid x)}{\log _{2}(n)}
 
     Returns:
         np.array: the uncertainty value(s)

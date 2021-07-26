@@ -44,7 +44,7 @@ def onehot_to_label(tensor):
 
 
 def get_dist_matrix(
-    a: np.array, b: np.array
+    a: np.ndarray, b: np.ndarray
 ):
     return cdist(a, b)
     # aSumSquare = np.sum(np.square(a), axis=1)
