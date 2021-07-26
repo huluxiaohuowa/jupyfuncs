@@ -19,7 +19,7 @@ __all__ = [
 ]
 
 
-def least_conf_unc(prob_array: np.array) -> np.array:
+def least_conf_unc(prob_array: np.ndarray) -> np.ndarray:
     """Least confidence uncertainty
 
     Args:
@@ -42,7 +42,7 @@ def least_conf_unc(prob_array: np.array) -> np.array:
     return uncs
 
 
-def margin_conf_unc(prob_array: np.array) -> np.array:
+def margin_conf_unc(prob_array: np.ndarray) -> np.ndarray:
     """The margin confidence uncertainty
 
     Args:
@@ -59,7 +59,7 @@ def margin_conf_unc(prob_array: np.array) -> np.array:
     return 1 - diffs
 
 
-def ratio_conf_unc(prob_array: np.array) -> np.array:
+def ratio_conf_unc(prob_array: np.ndarray) -> np.ndarray:
     """Ratio based uncertainties
 
     Args:
@@ -76,7 +76,7 @@ def ratio_conf_unc(prob_array: np.array) -> np.array:
     return ratio
 
 
-def entropy_unc(prob_array: np.array) -> np.array:
+def entropy_unc(prob_array: np.ndarray) -> np.ndarray:
     """Entropy based uncertainty
 
     Args:
@@ -105,5 +105,5 @@ unc_dict = {
 }
 
 
-def get_prob_unc(prob_array: np.array, unc: str) -> np.array:
+def get_prob_unc(prob_array: np.ndarray, unc: str) -> np.ndarray:
     return unc_dict[unc](prob_array)
