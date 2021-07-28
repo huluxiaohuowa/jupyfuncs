@@ -46,7 +46,7 @@ def get_metrics_curves(
             log_file
         )
         if not osp.exists(log):
-            print(f"WARNING: not log for {ckpt}")
+            print(f"WARNING: no log file for {ckpt}")
             continue
         data_dict[ckpt] = []
         data_idx = 0
