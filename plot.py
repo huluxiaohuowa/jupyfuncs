@@ -72,7 +72,7 @@ def get_metrics_curves(
     for i, (ckpt, points) in enumerate(data_dict.items()):
         points_array = np.array(points).T
         plt.plot(points_array[0], points_array[1], label=ckpt, color=colors[i])
-    lg = plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper right')
+    lg = plt.legend(bbox_to_anchor=(1.2, 1.0), loc='upper right')
     # plt.legend(loc='lower right')
     plt.xlabel(
         label
