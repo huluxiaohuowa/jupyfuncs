@@ -66,7 +66,7 @@ def get_metrics_curves(
                 )
             if line_id >= num_points - 1:
                 break
-    plt.figure(figsize=(10, 6), dpi=300)
+    plt.figure(figsize=(10, 6), dpi=100)
     # plt.style.use('ggplot')
     plt.title(title)
     for i, (ckpt, points) in enumerate(data_dict.items()):
