@@ -163,6 +163,8 @@ def get_metrics_bars(
     training_sizes: t.List = [],
     episide_ids: t.List = [],
     nears_each: int = 5,
+    pretrained_num: int = 0,
+    x_diff: bool = False,
     metric='accuracy',
     log_file='metrics.log',
     label: LABEL = 'training_size',
@@ -215,6 +217,9 @@ def get_metrics_bars(
             nears_each=nears_each
         )
         data_dict[ckpt] = (mean_s, var_s)
+    
+    if x_diff:
+        x_labels = np.array(x_labels, dtype=np.int) - pretrained_num
  
     plt.figure(figsize=figsize, dpi=100)
     plt.title(title)
