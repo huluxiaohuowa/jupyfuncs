@@ -1,4 +1,5 @@
 import os
+import typing as t
 import inspect
 import fnmatch
 import linecache
@@ -66,3 +67,10 @@ def str_from_line(
     Returns:
     """
     return linecache.getline(file, idx + 1).strip()
+
+
+def splitted_strs_from_line(
+    file: str,
+    idx: int
+) -> t.List:
+    return str_from_line(file, idx).split()
