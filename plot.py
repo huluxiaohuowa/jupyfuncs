@@ -120,7 +120,7 @@ def get_means_vars(
                 float(splitted_strs_from_line(log_file, line_id)[2])
                 for line_id in nears
             ]))
-            var_s.append((np.var([
+            var_s.append((np.std([
                 float(splitted_strs_from_line(log_file, line_id)[2])
                 for line_id in nears
             ])))
@@ -149,9 +149,10 @@ def get_means_vars(
             for indices in true_indices_list
         ]
         var_s = [
-            np.var(values[indices])
+            np.std(values[indices])
             for indices in true_indices_list
         ]
+        var_s = np.array(var_s) / np.sqrt(num_points)
  
     return mean_s, var_s 
 
