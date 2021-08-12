@@ -8,6 +8,7 @@ we do not differentiate between transductive and inductive conformers
 import numpy as np
 import pandas as pd
 
+
 class CpClassfier:
     def __init__(self):
         self.cal_data = None

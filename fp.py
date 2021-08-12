@@ -1,7 +1,6 @@
 from rdkit import Chem
 import numpy as np
 from rdkit.Chem import AllChem
-from descriptastorus.descriptors import rdNormalizedDescriptors
 from rdkit.Chem import MACCSkeys
 
 
@@ -11,6 +10,7 @@ __all__ = [
 
 
 def get_rdnorm_fp(smiles):
+    from descriptastorus.descriptors import rdNormalizedDescriptors
     generator = rdNormalizedDescriptors.RDKit2DNormalized()
     features = generator.process(smiles)[1:]
     arr = np.array(features)
