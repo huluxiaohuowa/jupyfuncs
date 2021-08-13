@@ -27,10 +27,17 @@ def spmmsp(
 
 
 def label_to_onehot(ls, class_num):
-    ls = ls.reshape(-1, 1)
-    return torch.zeros(
-        (len(ls), class_num), device=ls.device
-    ).scatter_(1, ls, 1)
+    if isinstance(ls, torch.Tensor):
+        ls = ls.reshape(-1, 1)
+        return torch.zeros(
+            (len(ls), class_num), device=ls.device
+        ).scatter_(1, ls, 1)
+    else:
+        ls = np.array(ls, dtype=np.int)
+        arr = np.zeros((ls.size, a.max()+1))
+        arr[np.arange(ls.size), ls] = 1
+        return arr
+
 
 
 def onehot_to_label(tensor):
