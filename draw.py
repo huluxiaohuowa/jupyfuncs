@@ -1,5 +1,6 @@
 # Jupyter funcs
 import os
+import re
 import itertools
 from copy import deepcopy
 # from collections import defaultdict
@@ -422,3 +423,85 @@ def draw_mols_surfs(
         )
     view.zoomTo()
     return view.show()
+
+
+def draw_rxn(
+    rxn_smiles
+):
+    rxn = AllChem.ReactionFromSmarts(rxn_smiles, useSmiles=True)
+    d2d = Draw.MolDraw2DCairo(2000, 500)
+    d2d.DrawReaction(rxn, highlightByReactant=True)
+    png = d2d.GetDrawingText()
+    display(Image(png))
+
+
+def react(rxn_smarts, reagents):
+    try:
+        rxn = AllChem.ReactionFromSmarts(rxn_smarts)
+        # n_reactants = rxn.GetNumReactantTemplates()
+        products = rxn.RunReactants([
+            Chem.MolFromSmiles(smi) for smi in reagents
+        ])
+        return products
+    except Exception as e:
+        print(e)
+        return []
+
+
+def match_pattern(mol, patt):
+    if mol:
+        return mol.HasSubstructMatch(patt)
+    else:
+        return False
+
+
+def split_rxn_smiles(smi):
+    try:
+        reagents1, reagents2, products = smi.split('>')
+        if len(reagents2) > 0:
+            reagents = '.'.join([reagents1, reagents2])
+        else:
+            reagents = reagents1
+        return reagents, products
+    except Exception as e:
+        print(e)
+        return '', ''
+
+
+def find_mprod(rxn_smi):
+    # ref: https://github.com/LiamWilbraham/uspto-analysis/blob/master/reaction-stats-uspto.ipynb
+    rxn_smarts = '[C:1](=[O:2])-[OD1].[N!H0:3]>>[C:1](=[O:2])[N:3]'
+    patt_acid = Chem.MolFromSmarts('[CX3](=O)[OX2H1]')
+    patt_amine = Chem.MolFromSmarts('[N;H3,H2,H1]')  # ammonia or primary/secondary amine
+    
+    products = split_rxn_smiles(rxn_smi)[1].split('.')
+        
+    reactants = [r for r in split_rxn_smiles(rxn_smi)[0].split('.')]
+    cooh = [
+        r
+        for r in reactants
+        if match_pattern(Chem.MolFromSmiles(r), patt_acid)
+    ]
+    
+    cooh = [re.sub('@', '', i) for i in cooh]
+    
+    amine = [
+        r for r in reactants
+        if match_pattern(Chem.MolFromSmiles(r), patt_amine)
+    ]
+    amine = [re.sub('@', '', i) for i in amine]
+
+    for perm in itertools.product(cooh, amine):
+        
+        cooh_i = perm[0]
+        amine_i = perm[1]
+        
+        smarts_products = react(rxn_smarts, perm)
+
+        for p_1 in smarts_products:
+            for p_2 in products:
+                p_2 = re.sub('@', '', p_2)
+                patt = Chem.MolFromSmiles(p_2)  
+                if Chem.MolToInchiKey(p_1[0]) == Chem.MolToInchiKey(patt):  
+                    return cooh_i, amine_i, p_2
+    return None
