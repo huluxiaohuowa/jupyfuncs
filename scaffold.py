@@ -21,5 +21,5 @@ def create_sn(
     scaffParams.includeGenericBondScaffolds = includeGenericBondScaffolds
     scaffParams.includeScaffoldsWithAttachments = includeScaffoldsWithAttachments
     scaffParams.pruneBeforeFragmenting = pruneBeforeFragmenting
-    net = rdScaffoldNetwork.CreateScaffoldNetwork(mols,scaffParams)
+    net = rdScaffoldNetwork.CreateScaffoldNetwork(mols, scaffParams)
     return net
