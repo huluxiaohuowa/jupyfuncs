@@ -7,7 +7,6 @@ from copy import deepcopy
 
 from rdkit import Chem
 from rdkit.Chem.Draw import IPythonConsole
-import py3Dmol
 from rdkit.Chem.Draw.IPythonConsole import addMolToView
 # from rdkit.Chem import rdDepictor
 from rdkit.Chem.Draw import rdMolDraw2D
@@ -197,6 +196,7 @@ def drawit(m, p, confId=-1):
 
 
 def draw_confs(m):
+    import py3Dmol
     p = py3Dmol.view(width=500, height=500)
     return interact(drawit,
                     m=fixed(m),
@@ -410,6 +410,7 @@ def draw_mols_surfs(
     surface=True,
     surface_opacity=0.5
 ):
+    import py3Dmol
 
     view = py3Dmol.view(width=width, height=height)
     view.setBackgroundColor('0xeeeeee')
