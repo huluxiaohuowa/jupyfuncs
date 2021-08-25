@@ -52,7 +52,9 @@ def onehot_to_label(tensor):
 
 
 def label_to_tensor(label, num_classes, device=torch.device('cpu')):
-    if isinstance(label[0], t.Iterable):
+    if not any(label):
+        return torch.zeros(num_classes)
+    elif isinstance(label[0], t.Iterable):
         max_length = max([len(_l) for _l in label])
         index = [_l + _l[-1:] * (max_length - len(_l)) for _l in label]
         index = torch.LongTensor(index)
