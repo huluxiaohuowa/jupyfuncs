@@ -1,3 +1,4 @@
+import typing as t
 from collections import defaultdict
 
 import torch
@@ -32,12 +33,15 @@ def label_to_onehot(ls, class_num):
         return torch.zeros(
             (len(ls), class_num), device=ls.device
         ).scatter_(1, ls, 1)
-    else:
+    elif isinstance(ls, t.List):
         ls = np.array(ls, dtype=np.int)
-        arr = np.zeros((ls.size, a.max()+1))
+        arr = np.zeros((ls.size, ls.max() + 1))
         arr[np.arange(ls.size), ls] = 1
         return arr
-
+    elif not isinstance(ls, t.Iterable):
+        arr = np.zeros(class_num)
+        arr[ls] = 1
+        return arr
 
 
 def onehot_to_label(tensor):
@@ -48,12 +52,17 @@ def onehot_to_label(tensor):
 
 
 def label_to_tensor(label, num_classes, device=torch.device('cpu')):
-    max_length = max([len(_l) for _l in label])
-    index = [_l + _l[-1:] * (max_length - len(_l)) for _l in label]
-    index = torch.LongTensor(index)
-    return torch.zeros(
-        (len(label), num_classes), device=device
-    ).scatter_(1, index, 1)
+    if isinstance(label[0], t.Iterable):
+        max_length = max([len(_l) for _l in label])
+        index = [_l + _l[-1:] * (max_length - len(_l)) for _l in label]
+        index = torch.LongTensor(index)
+        return torch.zeros(
+            (len(label), num_classes), device=device
+        ).scatter_(1, index, 1)
+    else:
+        tensor = torch.zeros(num_classes)
+        tensor[label] = 1
+        return tensor
 
 
 def tensor_to_label(tensor, threshold=0.5):
