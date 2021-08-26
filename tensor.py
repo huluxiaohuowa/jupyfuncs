@@ -27,37 +27,49 @@ def spmmsp(
     )
 
 
-def label_to_onehot(ls, class_num,is_missing_label=False):
-    if is_missing_label:
-        return torch.ones(class_num) * float('nan')
+def label_to_onehot(ls, class_num, missing_label=-1):
+    """
+    example:
+    >>>label_to_onehot([2,3,-1],6,-1)
+    array([[ 0.,  0.,  1.,  0.],
+       [ 0.,  0.,  0.,  1.],
+       [nan, nan, nan, nan]])
+    :param ls:
+    :param class_num:
+    :param missing_label:
+    :return:
+    """
     if isinstance(ls, torch.Tensor):
-        ls = ls.reshape(-1, 1)
-        return torch.zeros(
-            (len(ls), class_num), device=ls.device
-        ).scatter_(1, ls, 1)
+        bool_t = ls == missing_label
+        clamp_t = torch.clamp(ls,min=0)
+        full_tensor = torch.zeros(ls.numel(),class_num)
+        full_tensor = full_tensor.scatter_(1, clamp_t.reshape(-1, 1), 1)
+        full_tensor[bool_t] = float('nan')
+        return full_tensor
     elif isinstance(ls, t.List):
         ls = np.array(ls, dtype=np.int)
+        bool_array = ls == missing_label
         arr = np.zeros((ls.size, ls.max() + 1))
         arr[np.arange(ls.size), ls] = 1
+        arr[bool_array] = np.nan
         return arr
     elif not isinstance(ls, t.Iterable):
         arr = np.zeros(class_num)
-        arr[ls] = 1
+        if ls == missing_label:
+            arr = arr * np.nan
+        else:
+            arr[ls] = 1
         return arr
 
 
-def onehot_to_label(tensor, return_missing_value=None):
-    if any(torch.isnan(tensor)) and return_missing_value is not None:
-        return return_missing_value
+def onehot_to_label(tensor):
     if isinstance(tensor, torch.Tensor):
         return torch.argmax(tensor, dim=-1)
     elif isinstance(tensor, np.ndarray):
         return np.argmax(tensor, axis=-1)
 
 
-def label_to_tensor(label, num_classes, device=torch.device('cpu'), is_missing_label=False):
-    if is_missing_label:
-        return torch.ones(num_classes) * float('nan')
+def label_to_tensor(label, num_classes, device=torch.device('cpu')):
     if not any(label):
         return torch.zeros(num_classes)
     elif isinstance(label[0], t.Iterable):
@@ -68,14 +80,14 @@ def label_to_tensor(label, num_classes, device=torch.device('cpu'), is_missing_l
             (len(label), num_classes), device=device
         ).scatter_(1, index, 1)
     else:
+        if label == -1:
+            return torch.zeros(num_classes)
         tensor = torch.zeros(num_classes)
         tensor[label] = 1
         return tensor
 
 
-def tensor_to_label(tensor, threshold=0.5, return_missing_value=None):
-    if any(torch.isnan(tensor)) and return_missing_value is not None:
-        return return_missing_value
+def tensor_to_label(tensor, threshold=0.5):
     label_list, label_dict = [], defaultdict(list)
     labels = (tensor > threshold).nonzero(as_tuple=False)
     for label in labels:
