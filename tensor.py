@@ -27,7 +27,9 @@ def spmmsp(
     )
 
 
-def label_to_onehot(ls, class_num):
+def label_to_onehot(ls, class_num,is_missing_label=False):
+    if is_missing_label:
+        return torch.ones(class_num) * float('nan')
     if isinstance(ls, torch.Tensor):
         ls = ls.reshape(-1, 1)
         return torch.zeros(
@@ -44,14 +46,18 @@ def label_to_onehot(ls, class_num):
         return arr
 
 
-def onehot_to_label(tensor):
+def onehot_to_label(tensor, return_missing_value=None):
+    if any(torch.isnan(tensor)) and return_missing_value is not None:
+        return return_missing_value
     if isinstance(tensor, torch.Tensor):
         return torch.argmax(tensor, dim=-1)
     elif isinstance(tensor, np.ndarray):
         return np.argmax(tensor, axis=-1)
 
 
-def label_to_tensor(label, num_classes, device=torch.device('cpu')):
+def label_to_tensor(label, num_classes, device=torch.device('cpu'), is_missing_label=False):
+    if is_missing_label:
+        return torch.ones(num_classes) * float('nan')
     if not any(label):
         return torch.zeros(num_classes)
     elif isinstance(label[0], t.Iterable):
@@ -67,7 +73,9 @@ def label_to_tensor(label, num_classes, device=torch.device('cpu')):
         return tensor
 
 
-def tensor_to_label(tensor, threshold=0.5):
+def tensor_to_label(tensor, threshold=0.5, return_missing_value=None):
+    if any(torch.isnan(tensor)) and return_missing_value is not None:
+        return return_missing_value
     label_list, label_dict = [], defaultdict(list)
     labels = (tensor > threshold).nonzero(as_tuple=False)
     for label in labels:
