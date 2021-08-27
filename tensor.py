@@ -27,20 +27,38 @@ def spmmsp(
     )
 
 
-def label_to_onehot(ls, class_num):
+def label_to_onehot(ls, class_num, missing_label=-1):
+    """
+    example:
+    >>>label_to_onehot([2,3,-1],6,-1)
+    array([[ 0.,  0.,  1.,  0.],
+       [ 0.,  0.,  0.,  1.],
+       [nan, nan, nan, nan]])
+    :param ls:
+    :param class_num:
+    :param missing_label:
+    :return:
+    """
     if isinstance(ls, torch.Tensor):
-        ls = ls.reshape(-1, 1)
-        return torch.zeros(
-            (len(ls), class_num), device=ls.device
-        ).scatter_(1, ls, 1)
+        bool_t = ls == missing_label
+        clamp_t = torch.clamp(ls,min=0)
+        full_tensor = torch.zeros(ls.numel(),class_num)
+        full_tensor = full_tensor.scatter_(1, clamp_t.reshape(-1, 1), 1)
+        full_tensor[bool_t] = float('nan')
+        return full_tensor
     elif isinstance(ls, t.List):
         ls = np.array(ls, dtype=np.int)
+        bool_array = ls == missing_label
         arr = np.zeros((ls.size, ls.max() + 1))
         arr[np.arange(ls.size), ls] = 1
+        arr[bool_array] = np.nan
         return arr
     elif not isinstance(ls, t.Iterable):
         arr = np.zeros(class_num)
-        arr[ls] = 1
+        if ls == missing_label:
+            arr = arr * np.nan
+        else:
+            arr[ls] = 1
         return arr
 
 
@@ -62,6 +80,8 @@ def label_to_tensor(label, num_classes, device=torch.device('cpu')):
             (len(label), num_classes), device=device
         ).scatter_(1, index, 1)
     else:
+        if label == -1:
+            return torch.zeros(num_classes)
         tensor = torch.zeros(num_classes)
         tensor[label] = 1
         return tensor
