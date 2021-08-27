@@ -41,23 +41,21 @@ def label_to_onehot(ls, class_num, missing_label=-1):
     """
     if isinstance(ls, torch.Tensor):
         bool_t = ls == missing_label
-        clamp_t = torch.clamp(ls,min=0)
-        full_tensor = torch.zeros(ls.numel(),class_num)
+        clamp_t = torch.clamp(ls, min=0)
+        full_tensor = torch.zeros(ls.numel(), class_num)
         full_tensor = full_tensor.scatter_(1, clamp_t.reshape(-1, 1), 1)
-        full_tensor[bool_t] = float('nan')
+        full_tensor[bool_t] = 0
         return full_tensor
     elif isinstance(ls, t.List):
-        ls = np.array(ls, dtype=np.int)
+        ls = np.array(ls, dtype=np.int32)
         bool_array = ls == missing_label
         arr = np.zeros((ls.size, ls.max() + 1))
         arr[np.arange(ls.size), ls] = 1
-        arr[bool_array] = np.nan
+        arr[bool_array] = 0
         return arr
     elif not isinstance(ls, t.Iterable):
         arr = np.zeros(class_num)
-        if ls == missing_label:
-            arr = arr * np.nan
-        else:
+        if ls != missing_label:
             arr[ls] = 1
         return arr
 
@@ -69,20 +67,30 @@ def onehot_to_label(tensor):
         return np.argmax(tensor, axis=-1)
 
 
-def label_to_tensor(label, num_classes, device=torch.device('cpu')):
-    if not any(label):
-        return torch.zeros(num_classes)
+def label_to_tensor(
+    label,
+    num_classes,
+    missing_label=-1,
+    device=torch.device('cpu')
+):
+    if isinstance(label, t.List) and not any(label):
+        return torch.zeros(num_classes).to(device)
     elif isinstance(label[0], t.Iterable):
         max_length = max([len(_l) for _l in label])
         index = [_l + _l[-1:] * (max_length - len(_l)) for _l in label]
-        index = torch.LongTensor(index)
-        return torch.zeros(
-            (len(label), num_classes), device=device
-        ).scatter_(1, index, 1)
+        tensor_list = []
+#         tensor = torch.zeros(len(label), num_classes, device=device)
+        for _idx in index:
+            _tensor = torch.zeros(num_classes).to(device)
+            _idx = torch.LongTensor(_idx)
+            _tensor = _tensor.scatter(0, _idx, 1)
+            tensor_list.append(_tensor)
+        
+        return torch.vstack(tensor_list).to(device)
     else:
-        if label == -1:
+        if label == missing_label:
             return torch.zeros(num_classes)
-        tensor = torch.zeros(num_classes)
+        tensor = torch.zeros(num_classes).to(device)
         tensor[label] = 1
         return tensor
 
