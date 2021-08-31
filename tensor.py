@@ -75,7 +75,7 @@ def label_to_tensor(
 ):
     if isinstance(label, t.List) and not any(label):
         return torch.zeros(num_classes).to(device)
-    elif isinstance(label[0], t.Iterable):
+    elif isinstance(label, t.List) and isinstance(label[0], t.Iterable):
         max_length = max([len(_l) for _l in label])
         index = [_l + _l[-1:] * (max_length - len(_l)) for _l in label]
         tensor_list = []
