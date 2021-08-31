@@ -55,7 +55,7 @@ def label_to_onehot(ls, class_num, missing_label=-1):
         return arr
     elif not isinstance(ls, t.Iterable):
         arr = np.zeros(class_num)
-        if ls != missing_label:
+        if ls != missing_label and not np.isnan(ls) and ls is not None:
             arr[ls] = 1
         return arr
 
@@ -88,7 +88,7 @@ def label_to_tensor(
         
         return torch.vstack(tensor_list).to(device)
     else:
-        if label == missing_label:
+        if label == missing_label or np.isnan(label):
             return torch.zeros(num_classes)
         tensor = torch.zeros(num_classes).to(device)
         tensor[label] = 1
