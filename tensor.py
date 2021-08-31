@@ -54,7 +54,7 @@ def label_to_onehot(ls, class_num, missing_label=-1):
         arr[bool_array] = 0
         return arr
     elif not isinstance(ls, t.Iterable):
-        arr = np.zeros(class_num)
+        arr = torch.zeros(class_num)
         if ls != missing_label and not np.isnan(ls) and ls is not None:
             arr[ls] = 1
         return arr
