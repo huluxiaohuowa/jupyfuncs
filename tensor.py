@@ -125,7 +125,7 @@ def get_valid_indices(labels):
         ).nonzero(as_tuple=True)[0]
     else:
         target_pd = pd.array(labels)
-        nan_indices = pd.isnan(target_pd)
+        nan_indices = pd.isna(target_pd)
         valid_indices = torch.LongTensor(
             np.where(nan_indices == False)[0]
         )
