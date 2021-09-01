@@ -3,6 +3,7 @@ from collections import defaultdict
 
 import torch
 import numpy as np
+import pandas as pd
 from scipy.spatial.distance import cdist
 
 
@@ -114,3 +115,18 @@ def get_dist_matrix(
     # mul = np.dot(a, b.T)
     # dists = np.sqrt(aSumSquare[:, np.newaxis] + bSumSquare - 2 * mul)
     # return dists
+
+
+def get_valid_indices(labels):
+    if isinstance(labels, torch.Tensor):
+        nan_indices = torch.isnan(labels)
+        valid_indices = (
+            nan_indices == False
+        ).nonzero(as_tuple=True)[0]
+    else:
+        target_pd = pd.array(labels)
+        nan_indices = pd.isnan(target_pd)
+        valid_indices = torch.LongTensor(
+            np.where(nan_indices == False)[0]
+        )
+    return valid_indices
