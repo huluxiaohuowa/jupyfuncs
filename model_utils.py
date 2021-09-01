@@ -31,17 +31,17 @@ def save_model(
 
 def load_model(
     save_dir,
-    model_name: str = None,
+    model_class=None,
     model=None,
     optimizer=None,
     train=False,
 ):
-    from .model_dict import MODEL_DICT
+    # from .model_dict import MODEL_DICT
     checkpoint = torch.load(save_dir)
     if model is None:
         init_args = checkpoint['init_args']
-        assert model_name is not None
-        model = MODEL_DICT[model_name](**init_args)
+        assert model_class is not None
+        model = model_class(**init_args)
         model.load_state_dict( 
             checkpoint['model_state_dict'], 
         )
