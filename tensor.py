@@ -134,9 +134,15 @@ def get_valid_indices(labels):
 
 def smooth_max(
     tensor: torch.Tensor,
-    inf_k: int = None
+    inf_k: int = None,
+    **kwargs
 ):
     if inf_k is None:
         inf_k = 10
-    max_value = torch.log(torch.sum(torch.exp(tensor * inf_k))) / inf_k
+    max_value = torch.log(
+        torch.sum(
+            torch.exp(tensor * inf_k),
+            **kwargs
+        )
+    ) / inf_k
     return max_value
