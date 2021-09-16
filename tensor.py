@@ -130,3 +130,13 @@ def get_valid_indices(labels):
             np.where(nan_indices == False)[0]
         )
     return valid_indices
+
+
+def smooth_max(
+    tensor: torch.Tensor,
+    inf_k: int = None
+):
+    if inf_k is None:
+        inf_k = 10
+    max_value = torch.log(torch.sum(torch.exp(tensor * inf_k))) / inf_k
+    return max_value
