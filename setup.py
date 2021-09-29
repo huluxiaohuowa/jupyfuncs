@@ -9,15 +9,15 @@ setup(
     author_email="jianxing.hu@xtalpi.com",
     description="XDL: XtalPi 深さ学習モデルの枠組み",
     url="www.xtalpi.com", 
-    # packages=['xdl'],
+    # packages=['jupyfuncs'],
     packages=find_packages(), 
     python_requires='>=3',
     data_files=[
         (
             'data_file', 
             [
-                'jupyfuncs/defined_BaseFeatures.fdef',
-                'jupyfuncs/datasets/vocab.txt'
+                'funcs/defined_BaseFeatures.fdef',
+                'funcs/datasets/vocab.txt'
             ]
         ),
     ],

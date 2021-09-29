@@ -1,2 +1,2 @@
 include versioneer.py
-include xdl/_version.py
+include funcs/_version.py
