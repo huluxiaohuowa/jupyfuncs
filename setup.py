@@ -7,7 +7,7 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     author="Jianxing Hu",
     author_email="jianxing.hu@xtalpi.com",
-    description="XDL: XtalPi 深さ学習モデルの枠組み",
+    description="jupyfuncs",
     url="www.xtalpi.com", 
     # packages=['jupyfuncs'],
     packages=find_packages(), 
@@ -16,8 +16,8 @@ setup(
         (
             'data_file', 
             [
-                'funcs/defined_BaseFeatures.fdef',
-                'funcs/datasets/vocab.txt'
+                'jupyfuncs/defined_BaseFeatures.fdef',
+                'jupyfuncs/datasets/vocab.txt'
             ]
         ),
     ],

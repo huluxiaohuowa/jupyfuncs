@@ -1,2 +1,2 @@
 include versioneer.py
-include funcs/_version.py
+include jupyfuncs/_version.py
