@@ -427,9 +427,10 @@ def draw_mols_surfs(
 
 
 def draw_rxn(
-    rxn_smiles
+    rxn_smiles,
+    use_smiles: bool = True,
 ):
-    rxn = AllChem.ReactionFromSmarts(rxn_smiles, useSmiles=True)
+    rxn = AllChem.ReactionFromSmarts(rxn_smiles, useSmiles=use_smiles)
     d2d = Draw.MolDraw2DCairo(2000, 500)
     d2d.DrawReaction(rxn, highlightByReactant=True)
     png = d2d.GetDrawingText()
