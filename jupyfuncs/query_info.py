@@ -70,7 +70,8 @@ def query_a_compound(
     fei = None
     found = False  
 
-    query_name = query_name.lower()
+    if by != 'smiles':
+        query_name = query_name.lower()
     
     by = 'name'
     table = by + '_maps'
