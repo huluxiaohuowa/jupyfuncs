@@ -47,6 +47,7 @@ from PIL import Image as pilImage
 from io import BytesIO
 from IPython.display import SVG, Image
 from ipywidgets import interact
+import molvs as mv
 
 
 IPythonConsole.ipython_useSVG = True
@@ -512,8 +513,10 @@ def find_mprod(rxn_smi):
 
 def get_largest_mol(smiles, to_smiles=False):
     mol = Chem.MolFromSmiles(smiles)
+    if mol is None:
+        return
     mol_frags = rdmolops.GetMolFrags(mol, asMols=True)
     largest_mol = max(mol_frags, default=mol, key=lambda m: m.GetNumAtoms())
     if to_smiles:
-        return Chem.MolToSmiles(largest_mol)
+        return mv.standardize_smiles(Chem.MolToSmiles(largest_mol))
     return largest_mol
