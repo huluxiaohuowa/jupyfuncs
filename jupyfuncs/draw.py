@@ -510,8 +510,10 @@ def find_mprod(rxn_smi):
     return None
 
 
-def get_largest_mol(smiles):
+def get_largest_mol(smiles, to_smiles=False):
     mol = Chem.MolFromSmiles(smiles)
     mol_frags = rdmolops.GetMolFrags(mol, asMols=True)
     largest_mol = max(mol_frags, default=mol, key=lambda m: m.GetNumAtoms())
+    if to_smiles:
+        return Chem.MolToSmiles(largest_mol)
     return largest_mol
