@@ -33,6 +33,7 @@ from IPython.display import HTML
 # from rdkit import rdBase
 from IPython.display import display
 
+from rdkit.Chem import rdmolops
 from rdkit.Chem import Draw
 from rdkit.Chem.Draw import IPythonConsole
 from rdkit.Chem import rdRGroupDecomposition
@@ -507,3 +508,10 @@ def find_mprod(rxn_smi):
                 if Chem.MolToInchiKey(p_1[0]) == Chem.MolToInchiKey(patt):  
                     return cooh_i, amine_i, p_2
     return None
+
+
+def get_largest_mol(smiles):
+    mol = Chem.MolFromSmiles(smiles)
+    mol_frags = rdmolops.GetMolFrags(mol, asMols=True)
+    largest_mol = max(mol_frags, default=mol, key=lambda m: m.GetNumAtoms())
+    return largest_mol
