@@ -17,7 +17,8 @@ setup(
             'data_file', 
             [
                 'jupyfuncs/defined_BaseFeatures.fdef',
-                'jupyfuncs/datasets/vocab.txt'
+                'jupyfuncs/datasets/vocab.txt',
+                'jupyfuncs/datasets/route_template.json'
             ]
         ),
     ],
