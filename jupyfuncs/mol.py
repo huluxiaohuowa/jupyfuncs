@@ -520,3 +520,12 @@ def get_largest_mol(smiles, to_smiles=False):
     if to_smiles:
         return mv.standardize_smiles(Chem.MolToSmiles(largest_mol))
     return largest_mol
+
+
+def standardize_tautomer(mol, max_tautomers=1000):
+    from rdkit.Chem.MolStandardize import rdMolStandardize
+    params = rdMolStandardize.CleanupParameters()
+    params.maxTautomers = max_tautomers
+    enumerator = rdMolStandardize.TautomerEnumerator(params)
+    cm = enumerator.Canonicalize(mol)
+    return cm

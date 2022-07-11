@@ -28,12 +28,19 @@ class MolNode(object):
     def parse_dict(self):
         routes = []
         for route in self.routes:
-            route_dict = route.get_dict()
-            routes.append(route_dict)
+            parse_dict = getattr(route, 'parse_dict', None)
+            if parse_dict is not None:
+                route.parse_dict()
+            # route_dict = route.get_dict()
+            if isinstance(route, t.Dict):
+                routes.append(route)
+            else:
+                routes.append(route.get_dict())
                 
         self.routes = routes
 
     def get_dict(self):
+        self.parse_dict()
         self.info_dict = {
             "id_type": self.id_type,
             "id_value": self.id_value,
@@ -68,10 +75,17 @@ class RouteNode(object):
     def parse_dict(self):
         children = []
         for mol_node in self.children:
-            children.append(mol_node.get_dict())
+            parse_dict = getattr(mol_node, 'parse_dict', None)
+            if parse_dict is not None:
+                mol_node.parse_dict()
+            if isinstance(mol_node, t.Dict):
+                children.append(mol_node)
+            else:
+                children.append(mol_node.get_dict())
         self.children = children
 
     def get_dict(self):
+        self.parse_dict()
         self.info_dict = {
             "rxn_template": self.rxn_template,
             "rxn_type": self.rxn_type,
