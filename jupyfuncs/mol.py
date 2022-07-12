@@ -33,6 +33,7 @@ from IPython.display import HTML
 # from rdkit import rdBase
 from IPython.display import display
 
+from rdkit import Chem
 from rdkit.Chem import rdmolops
 from rdkit.Chem import Draw
 from rdkit.Chem.Draw import IPythonConsole
@@ -40,6 +41,7 @@ from rdkit.Chem import rdRGroupDecomposition
 from rdkit.Chem import rdqueries
 from rdkit.Chem import rdDepictor
 from rdkit.Chem.Draw import rdMolDraw2D
+from rdkit.Chem.MolStandardize import rdMolStandardize
 from rdkit import Geometry
 rdDepictor.SetPreferCoordGen(True)
 import pandas as pd
@@ -523,9 +525,22 @@ def get_largest_mol(smiles, to_smiles=False):
 
 
 def standardize_tautomer(mol, max_tautomers=1000):
-    from rdkit.Chem.MolStandardize import rdMolStandardize
     params = rdMolStandardize.CleanupParameters()
     params.maxTautomers = max_tautomers
     enumerator = rdMolStandardize.TautomerEnumerator(params)
     cm = enumerator.Canonicalize(mol)
     return cm
+
+
+def reorderTautomers(m):
+    enumerator = rdMolStandardize.TautomerEnumerator()
+    canon = enumerator.Canonicalize(m)
+    csmi = Chem.MolToSmiles(canon)
+    res = [canon]
+    tauts = enumerator.Enumerate(m)
+    smis = [Chem.MolToSmiles(x) for x in tauts]
+    stpl = sorted(
+        (x, y) for x, y in zip(smis, tauts) if x!=csmi
+    )
+    res += [y for _, y in stpl]
+    return res
