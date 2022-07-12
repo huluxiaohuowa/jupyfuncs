@@ -532,7 +532,7 @@ def standardize_tautomer(mol, max_tautomers=1000):
     return cm
 
 
-def reorderTautomers(m):
+def reorder_tautomers(m):
     enumerator = rdMolStandardize.TautomerEnumerator()
     canon = enumerator.Canonicalize(m)
     csmi = Chem.MolToSmiles(canon)
