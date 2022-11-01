@@ -1,0 +1,59 @@
+package:
+  name: {{ EXAR_PROJECT_NAME }}
+  version: {{ EXAR_CONDA_BUILD_VERSION }}
+
+build:
+  number: {{ EXAR_CONDA_BUILD_NUMBER }}
+  {% if EXAR_CONDA_BUILD_FEATURE_TAG is defined %}
+  string: {{ EXAR_CONDA_BUILD_FEATURE_TAG }}
+  {% endif %}
+
+source:
+  path: ../..
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - ipykernel
+    - ipywidgets
+    - pytest
+    - pylint
+    - notebook
+    - numpy>=1.14
+    - scipy
+    - pandas
+    - numba
+    - matplotlib
+    - seaborn
+    - rdkit
+    - scikit-learn
+    - tensorboard>=1.14
+    - pathos
+    - cirpy
+    - molvs
+    - pubchempy
+    - psycopg
+
+  run:
+    - python
+    - setuptools
+    - ipykernel
+    - ipywidgets
+    - pytest
+    - pylint
+    - notebook
+    - numpy>=1.14
+    - scipy
+    - pandas
+    - numba
+    - matplotlib
+    - seaborn
+    - rdkit
+    - scikit-learn
+    - tensorboard>=1.14
+    - pathos
+    - cirpy
+    - molvs
+    - pubchempy
+    - psycopg

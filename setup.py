@@ -15,11 +15,7 @@ setup(
     data_files=[
         (
             'data_file', 
-            [
-                'jupyfuncs/defined_BaseFeatures.fdef',
-                'jupyfuncs/datasets/vocab.txt',
-                'jupyfuncs/datasets/route_template.json'
-            ]
+            ['jupyfuncs/defined_BaseFeatures.fdef']
         ),
     ],
     include_package_data=True

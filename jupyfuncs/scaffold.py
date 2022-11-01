@@ -2,7 +2,6 @@ from rdkit.Chem.Scaffolds import rdScaffoldNetwork
 from rdkit import RDLogger
 RDLogger.DisableLog('rdApp.info')
 
-
 def create_sn(
     mols,
     includeGenericScaffolds=False,

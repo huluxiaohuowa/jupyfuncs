@@ -1,0 +1,180 @@
+variables:
+  IMAGE_GITLARKER: "ccr.ccs.tencentyun.com/xtalpi-development/gitlarker:0.1.0"
+  IMAGE_EXAR: "ccr.ccs.tencentyun.com/xtalpi-production/exarcli-tiny:stable"
+
+stages:
+  - start
+  - prepare
+  - build
+  - publish
+  - close
+
+default:
+  tags: [hk]
+
+.exar_login:
+  before_script:
+    - exar login -k $EXAR_APPKEY -s $EXAR_APPSECRET
+
+Notify-About-Start:
+  stage: start
+  needs: []
+  image: $IMAGE_GITLARKER
+  script:
+    - gitlarker send-text-msg -e "${GITLAB_USER_EMAIL}" "😊 正在为您在 ${CI_PROJECT_NAME} 的提交（$CI_COMMIT_REF_NAME）做构建，跟踪：${CI_PIPELINE_URL}"
+  only:
+    - main
+
+exar_prepare:
+  stage: prepare
+  image: $IMAGE_EXAR
+  extends: .exar_login
+  script:
+    - exar context init
+    - sed -e "s/export //g" ${CI_PROJECT_DIR}/.exar/env.source | sed -e "s/[\']//g" > ${CI_PROJECT_DIR}/.exar/env.env
+
+  artifacts:
+    reports:
+      dotenv: .exar/env.env
+
+  needs:
+    - Notify-About-Start
+  only:
+    - main
+
+conda_build_py37:
+  stage: build
+  image: $IMAGE_EXAR
+  extends: .exar_login
+  script:
+    - env
+    - cat ${CI_PROJECT_DIR}/pubhub/condarc > ~/.condarc
+    - cat ~/.condarc
+    - exar kit mamba-build
+               project_name=$EXAR_PROJECT_NAME
+               version=$EXAR_CONDA_BUILD_VERSION
+               build_num=$EXAR_CONDA_BUILD_NUMBER
+               recipe=$EXAR_CONDA_BUILD_RECIPE
+               build_args="$EXAR_CONDA_BUILD_ARGS_PY37"
+
+    - EXAR_CONDA_BUILD_OUTPUT=$(cat ${CI_PROJECT_DIR}/.exar/env.source | cut -d = -f 2 | sed -e "s/[\']//g")
+    - EXAR_CONDA_BUILD_OUTPUT_BASENAME=$(echo $EXAR_CONDA_BUILD_OUTPUT | grep -o '[^/]*$')
+    - EXAR_CONDA_BUILD_OUTPUT_COPIED=${CI_PROJECT_DIR}/.exar/${EXAR_CONDA_BUILD_OUTPUT_BASENAME}
+    - cp $EXAR_CONDA_BUILD_OUTPUT ${CI_PROJECT_DIR}/.exar
+    - echo $EXAR_CONDA_BUILD_OUTPUT_COPIED > ${CI_PROJECT_DIR}/.exar/conda_build_output_py37.dat
+
+  artifacts:
+    paths:
+      - .exar/conda_build_output_py37.dat
+      - .exar/*.tar.bz2
+
+  needs:
+    - exar_prepare
+  only:
+    - main
+
+conda_build_py38:
+  stage: build
+  image: $IMAGE_EXAR
+  extends: .exar_login
+  script:
+    - env
+    - cat ${CI_PROJECT_DIR}/pubhub/condarc > ~/.condarc
+    - cat ~/.condarc
+    - exar kit mamba-build
+               project_name=$EXAR_PROJECT_NAME
+               version=$EXAR_CONDA_BUILD_VERSION
+               build_num=$EXAR_CONDA_BUILD_NUMBER
+               recipe=$EXAR_CONDA_BUILD_RECIPE
+               build_args="$EXAR_CONDA_BUILD_ARGS_PY38"
+
+    - EXAR_CONDA_BUILD_OUTPUT=$(cat ${CI_PROJECT_DIR}/.exar/env.source | cut -d = -f 2 | sed -e "s/[\']//g")
+    - EXAR_CONDA_BUILD_OUTPUT_BASENAME=$(echo $EXAR_CONDA_BUILD_OUTPUT | grep -o '[^/]*$')
+    - EXAR_CONDA_BUILD_OUTPUT_COPIED=${CI_PROJECT_DIR}/.exar/${EXAR_CONDA_BUILD_OUTPUT_BASENAME}
+    - cp $EXAR_CONDA_BUILD_OUTPUT ${CI_PROJECT_DIR}/.exar
+    - echo $EXAR_CONDA_BUILD_OUTPUT_COPIED > ${CI_PROJECT_DIR}/.exar/conda_build_output_py38.dat
+
+  artifacts:
+    paths:
+      - .exar/conda_build_output_py38.dat
+      - .exar/*.tar.bz2
+
+  needs:
+    - exar_prepare
+  only:
+    - main
+
+conda_build_py39:
+  stage: build
+  image: $IMAGE_EXAR
+  extends: .exar_login
+  script:
+    - env
+    - cat ${CI_PROJECT_DIR}/pubhub/condarc > ~/.condarc
+    - cat ~/.condarc
+    - exar kit mamba-build
+               project_name=$EXAR_PROJECT_NAME
+               version=$EXAR_CONDA_BUILD_VERSION
+               build_num=$EXAR_CONDA_BUILD_NUMBER
+               recipe=$EXAR_CONDA_BUILD_RECIPE
+               build_args="$EXAR_CONDA_BUILD_ARGS_PY39"
+
+    - EXAR_CONDA_BUILD_OUTPUT=$(cat ${CI_PROJECT_DIR}/.exar/env.source | cut -d = -f 2 | sed -e "s/[\']//g")
+    - EXAR_CONDA_BUILD_OUTPUT_BASENAME=$(echo $EXAR_CONDA_BUILD_OUTPUT | grep -o '[^/]*$')
+    - EXAR_CONDA_BUILD_OUTPUT_COPIED=${CI_PROJECT_DIR}/.exar/${EXAR_CONDA_BUILD_OUTPUT_BASENAME}
+    - cp $EXAR_CONDA_BUILD_OUTPUT ${CI_PROJECT_DIR}/.exar
+    - echo $EXAR_CONDA_BUILD_OUTPUT_COPIED > ${CI_PROJECT_DIR}/.exar/conda_build_output_py39.dat
+
+  artifacts:
+    paths:
+      - .exar/conda_build_output_py39.dat
+      - .exar/*.tar.bz2
+
+  needs:
+    - exar_prepare
+  only:
+    - main
+
+conda_publish:
+  stage: publish
+  image: $IMAGE_EXAR
+  extends: .exar_login
+  script:
+    - env
+    - export EXAR_CONDA_BUILD_OUTPUT="$(cat ${CI_PROJECT_DIR}/.exar/conda_build_output_py37.dat),$(cat ${CI_PROJECT_DIR}/.exar/conda_build_output_py38.dat),$(cat ${CI_PROJECT_DIR}/.exar/conda_build_output_py39.dat)"
+    - echo $EXAR_CONDA_BUILD_OUTPUT
+    - exar publish conda
+           --intg_source=$RUN_DISPLAY_URL
+           --tracker=$EXAR_DEFAULT_USER
+           --release_note="$EXAR_CONDA_PUBLISH_RELEASE_NOTE"
+           $EXAR_CONDA_BUILD_OUTPUT
+
+  needs:
+    - conda_build_py37
+    - conda_build_py38
+    - conda_build_py39
+
+  only:
+    - main
+
+Notify-About-Success:
+  stage: close
+  when: on_success
+  image: $IMAGE_GITLARKER
+  script:
+    - gitlarker send-text-msg -e "${GITLAB_USER_EMAIL}" "🎉 恭喜，您在 ${CI_PROJECT_NAME} 的提交（$CI_COMMIT_REF_NAME）通过了构建管道，详情 ${CI_PIPELINE_URL}"
+  needs:
+    - conda_publish
+  only:
+    - main
+
+Notify-About-Failure:
+  stage: close
+  when: on_failure
+  image: $IMAGE_GITLARKER
+  script:
+    - gitlarker send-text-msg -e "${GITLAB_USER_EMAIL}" "🚫 您在 ${CI_PROJECT_NAME} 的提交（$CI_COMMIT_REF_NAME）未能通过构建，请关注 ${CI_PIPELINE_URL}"
+  needs:
+    - conda_publish
+  only:
+    - main
