@@ -1,58 +1,133 @@
-# This file is a template, and might need editing before it works on your project.
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Python.gitlab-ci.yml
-
-# Official language image. Look for the different tagged releases at:
-# https://hub.docker.com/r/library/python/tags/
-image: python:latest
-
-# Change pip's cache directory to be inside the project directory since we can
-# only cache local items.
 variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  IMAGE_GITLARKER: "ccr.ccs.tencentyun.com/xtalpi-development/gitlarker:0.1.0"
+  IMAGE_EXAR: "ccr.ccs.tencentyun.com/xtalpi-production/exarcli-tiny:stable"
 
-# Pip's cache doesn't store the python packages
-# https://pip.pypa.io/en/stable/topics/caching/
-#
-# If you want to also cache the installed packages, you have to install
-# them in a virtualenv and cache it as well.
-cache:
-  paths:
-    - .cache/pip
-    - venv/
+stages:
+  - start
+  - prepare
+  - build
+  - publish
+  - close
 
-before_script:
-  - python --version  # For debugging
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
+default:
+  tags: [hk]
 
-test:
+.exar_login:
+  before_script:
+    - exar login -k $EXAR_APPKEY -s $EXAR_APPSECRET
+
+Notify-About-Start:
+  stage: start
+  needs: []
+  image: $IMAGE_GITLARKER
   script:
-    - python setup.py test
-    - pip install tox flake8  # you can also use tox
-    - tox -e py36,flake8
+    - gitlarker send-text-msg -e "${GITLAB_USER_EMAIL}" "😊 正在为您在 ${CI_PROJECT_NAME} 的提交（$CI_COMMIT_REF_NAME）做构建，跟踪：${CI_PIPELINE_URL}"
+  only:
+    - main
 
-run:
+exar_prepare:
+  stage: prepare
+  image: $IMAGE_EXAR
+  extends: .exar_login
   script:
-    - python setup.py bdist_wheel
-    # an alternative approach is to install and run:
-    - pip install dist/*
-    # run the command here
+    - exar context init
+    - sed -e "s/export //g" ${CI_PROJECT_DIR}/.exar/env.source | sed -e "s/[\']//g" > ${CI_PROJECT_DIR}/.exar/env.env
+
+  artifacts:
+    reports:
+      dotenv: .exar/env.env
+
+  needs:
+    - Notify-About-Start
+  only:
+    - main
+
+conda_build:
+  stage: build
+  image: $IMAGE_EXAR
+  extends: .exar_login
+  script:
+    - env
+    - cat ${CI_PROJECT_DIR}/pubhub/condarc > ~/.condarc
+    - cat ~/.condarc
+
+    - EXAR_CONDA_BUILD_ARGS="--python "${PYTHON_VERSION}
+    - exar kit mamba-build
+               project_name=$EXAR_PROJECT_NAME
+               version=$EXAR_CONDA_BUILD_VERSION
+               build_num=$EXAR_CONDA_BUILD_NUMBER
+               recipe=$EXAR_CONDA_BUILD_RECIPE
+               build_args="$EXAR_CONDA_BUILD_ARGS"
+
+    - EXAR_CONDA_BUILD_OUTPUT=$(cat ${CI_PROJECT_DIR}/.exar/env.source | cut -d = -f 2 | sed -e "s/[\']//g")
+    - EXAR_CONDA_BUILD_OUTPUT_BASENAME=$(echo $EXAR_CONDA_BUILD_OUTPUT | grep -o '[^/]*$')
+    - EXAR_CONDA_BUILD_OUTPUT_COPIED=${CI_PROJECT_DIR}/.exar/${EXAR_CONDA_BUILD_OUTPUT_BASENAME}
+    - cp $EXAR_CONDA_BUILD_OUTPUT ${CI_PROJECT_DIR}/.exar
+    - echo $EXAR_CONDA_BUILD_OUTPUT_COPIED > ${CI_PROJECT_DIR}/.exar/conda_build_output_py${PYTHON_VERSION}.dat
+
   artifacts:
     paths:
-      - dist/*.whl
+      - .exar/conda_build_output_py*.dat
+      - .exar/*.tar.bz2
 
-pages:
+  parallel:
+    matrix:
+      - PYTHON_VERSION: ["3.7", "3.8", "3.9"]
+
+  needs:
+    - exar_prepare
+  only:
+    - main
+
+conda_publish:
+  stage: publish
+  image: $IMAGE_EXAR
+  extends: .exar_login
   script:
-    - pip install sphinx sphinx-rtd-theme
-    - cd doc
-    - make html
-    - mv build/html/ ../public/
-  artifacts:
-    paths:
-      - public
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - env
+    - EXAR_CONDA_BUILD_OUTPUT=""
+    - PYTHON_VERSION="3.7 3.8 3.9"
+
+    - |
+      for CURRENT_PYTHON_VERSION in $PYTHON_VERSION
+      do
+        EXAR_CONDA_BUILD_OUTPUT="${EXAR_CONDA_BUILD_OUTPUT},$(cat ${CI_PROJECT_DIR}/.exar/conda_build_output_py${CURRENT_PYTHON_VERSION}.dat)"
+        echo $EXAR_CONDA_BUILD_OUTPUT
+      done
+
+    - EXAR_CONDA_BUILD_OUTPUT="${EXAR_CONDA_BUILD_OUTPUT:1}"
+    - echo $EXAR_CONDA_BUILD_OUTPUT
+
+    - exar publish conda
+           --intg_source=$RUN_DISPLAY_URL
+           --tracker=$EXAR_DEFAULT_USER
+           --release_note="$EXAR_CONDA_PUBLISH_RELEASE_NOTE"
+           $EXAR_CONDA_BUILD_OUTPUT
+
+  needs:
+    - conda_build
+
+  only:
+    - main
+
+Notify-About-Success:
+  stage: close
+  when: on_success
+  image: $IMAGE_GITLARKER
+  script:
+    - gitlarker send-text-msg -e "${GITLAB_USER_EMAIL}" "🎉 恭喜，您在 ${CI_PROJECT_NAME} 的提交（$CI_COMMIT_REF_NAME）通过了构建管道，详情 ${CI_PIPELINE_URL}"
+  needs:
+    - conda_publish
+  only:
+    - main
+
+Notify-About-Failure:
+  stage: close
+  when: on_failure
+  image: $IMAGE_GITLARKER
+  script:
+    - gitlarker send-text-msg -e "${GITLAB_USER_EMAIL}" "🚫 您在 ${CI_PROJECT_NAME} 的提交（$CI_COMMIT_REF_NAME）未能通过构建，请关注 ${CI_PIPELINE_URL}"
+  needs:
+    - conda_publish
+  only:
+    - main
