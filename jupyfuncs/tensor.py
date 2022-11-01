@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import cdist
 
-
 def spmmsp(
     sp1: torch.sparse.Tensor,
     sp2: torch.sparse.Tensor

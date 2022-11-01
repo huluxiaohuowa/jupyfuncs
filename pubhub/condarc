@@ -1,6 +1,5 @@
 channels:
  - https://xtalpi_conda:NTMD06Q7Kb08@api-beta.xtalpi.io:8443/conda/tags/D
- - pytorch
  - conda-forge
  - defaults
 channel_priority: disabled
