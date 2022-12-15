@@ -11,8 +11,8 @@ import multiprocess as mp
 
 from rdkit import RDLogger
 
-from .pbar import tqdm
-from .norm import Normalizer
+from jupyfuncs.pbar import tqdm
+from jupyfuncs.norm import Normalizer
 
 # from rdkit.Chem.Draw import IPythonConsole
 from rdkit.Chem import PyMol
@@ -22,7 +22,6 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 lg = RDLogger.logger()
 lg.setLevel(4)
-
 
 __all__ = [
     'get_mols_from_smi',

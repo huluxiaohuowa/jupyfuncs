@@ -2,18 +2,15 @@ import re
 
 import cirpy
 import pubchempy as pcp
-# from rdkit import Chem
 import molvs as mv
-from psycopg import sql
 
-from .postgres import connect_by_infofile
-
+from jupyfuncs.sql import connect_by_infofile
 
 def query_from_cir(query_name: str):
     smiles = None
     # cas_list = []
     # name_list = []
-    
+
     cas_list = cirpy.resolve(query_name, 'cas')
     if cas_list is None or not cas_list:
         cas_list = []
@@ -33,7 +30,6 @@ def query_from_cir(query_name: str):
         print(e)
 
     return smiles, cas_list, name_list
-
 
 def query_from_pubchem(query_name: str):
     results = pcp.get_compounds(query_name, 'name')

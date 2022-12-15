@@ -1,7 +1,6 @@
 import psycopg
 from psycopg import sql
 
-
 def connect_by_infofile(info_file: str) -> psycopg.Connection:
     """Create a postgres connection
 
