@@ -11,7 +11,7 @@ from jupyfuncs.sql import connect_by_infofile
 def query_from_cir(query_name: str):
     smiles = None
     # cas_list = []
-    # name_list = []
+    # name_list = [host=172.20.0.5 dbname=pistachio port=5432 user=postgres password=woshipostgres]
 
     cas_list = cirpy.resolve(query_name, 'cas')
     if cas_list is None or not cas_list:
@@ -136,7 +136,8 @@ def query_a_compound(
                 print(e)
         for name in name_list:
             insert_name_map_sql = sql.SQL(
-                "INSERT INTO name_maps (fei, name) VALUES (%s, %s) ON CONFLICT (name) DO NOTHING"
+                "INSERT INTO name_maps (fei, name) VALUES (%s, %s) ON CONFLICT (fei, name) DO NOTHING"
+                # "INSERT INTO name_maps (fei, name) VALUES (%s, %s)"
             ) 
             try:
                 conn.execute(insert_name_map_sql, [fei, name.lower()])

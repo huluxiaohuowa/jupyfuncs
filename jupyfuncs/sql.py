@@ -1,6 +1,7 @@
 import psycopg
 from psycopg import sql
 
+
 def connect_by_infofile(info_file: str) -> psycopg.Connection:
     """Create a postgres connection
 
@@ -32,10 +33,10 @@ def get_item_by_idx(
 
     query_name = str(idx)
     query = sql.SQL(
-            "select reaction_id from {table} where {by} = %s"
-        ).format(
-            table=sql.Identifier(table),
-            by=sql.Identifier(by)
-        )
+        "select reaction_id from {table} where {by} = %s"
+    ).format(
+        table=sql.Identifier(table),
+        by=sql.Identifier(by)
+    )
     cur = conn.execute(query, [query_name]).fetchone()
     return cur[0]

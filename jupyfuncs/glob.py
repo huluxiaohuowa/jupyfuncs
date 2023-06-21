@@ -10,6 +10,7 @@ from os import path as osp
 import pathlib
 import sys
 import importlib
+import subprocess
 
 import multiprocess as mp
 
@@ -48,34 +49,24 @@ def get_current_dir():
     return os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 
-def get_num_lines(
-    input_file: str
-) -> int:
-    """Get num_of_lines of a text file
-    Args:
-        input_file (str): location of the file
-    Returns:
-        int: num_lines of the file
-    Examples:
-        >>> get_num_lines("./dataset.txt")
-    """
-    for num_lines, line in enumerate(open(input_file, 'r')):
-        pass
-    return num_lines + 1
+def get_num_lines(file):
+    num_lines = subprocess.check_output(
+        ['wc', '-l', file]
+    ).split()[0]
+    return num_lines
 
 
-def str_from_line(
-    file: str,
-    idx: int
-) -> str:
-    """
-    Get string from a specific line
-    Args:
-        idx (int): index of line
-        file (string): location of a file
-    Returns:
-    """
-    return linecache.getline(file, idx + 1).strip()
+def str_from_line(file, line, split=False):
+    smi = subprocess.check_output(
+        # ['sed','-n', f'{str(i+1)}p', file]
+        ["sed", f"{str(line + 1)}q;d", file]
+    )
+    if isinstance(smi, bytes):
+        smi = smi.decode().strip()
+    if split:
+        if ' ' or '\t' in smi:
+            smi = smi.split()[0]
+    return smi
 
 
 def splitted_strs_from_line(
