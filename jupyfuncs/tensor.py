@@ -145,3 +145,15 @@ def smooth_max(
         )
     ) / inf_k
     return max_value
+
+
+def list_df(listA, listB):
+    retB = list(set(listA).intersection(set(listB)))
+
+    retC = list(set(listA).union(set(listB)))
+
+    retD = list(set(listB).difference(set(listA)))
+
+    retE = list(set(listA).difference(set(listB)))
+    return retB, retC, retD, retE
+
