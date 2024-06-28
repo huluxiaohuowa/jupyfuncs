@@ -1,4 +1,5 @@
 import sys
+from os import path as osp
 from IPython.core.display import HTML
 
 __all__ = [
@@ -24,6 +25,9 @@ def in_jupyter():
 
     which = True if 'ipykernel_launcher.py' in sys.argv[0] else False
     return which
+
+def in_docker():
+    return osp.exists('/.dockerenv')
 
 
 if in_jupyter():
