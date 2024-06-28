@@ -1,7 +1,8 @@
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]"]
+requires = ["setuptools>=42", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
 write_to = "jupyfuncs/_version.py"
+local_scheme = "no-local-version"
 tag_regex = "^v?(\\d+\\.\\d+\\.\\d+)$"
