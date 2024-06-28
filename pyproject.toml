@@ -1,7 +1,10 @@
 [build-system]
-requires = ["setuptools>=42", "wheel", "setuptools_scm", "setuptools_scm[toml]"]
+requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
 write_to = "jupyfuncs/_version.py"
+# 防止生成任何本地版本信息
 local_scheme = "no-local-version"
+# 使用简单的标签版本
+version_scheme = "release-branch-semver"

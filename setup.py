@@ -1,17 +1,7 @@
 from setuptools import setup, find_packages
-import setuptools_scm
-
-def custom_version_scheme(version):
-    """A custom version scheme that avoids any additional local version identifiers."""
-    return version.tag.base_version if version.tag else '0.0.0'
 
 setup(
     name="jupyfuncs",
-    use_scm_version={
-        'local_scheme': 'no-local-version',
-        'version_scheme': custom_version_scheme,
-        'write_to': 'jupyfuncs/_version.py'
-    },
     author="Jianxing Hu",
     author_email="hu.jx@outlook.com",
     description="A collection of functions for Jupyter notebooks",
