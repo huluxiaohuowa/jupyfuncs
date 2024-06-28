@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
 import setuptools_scm
 
+
 def custom_version_scheme(version):
     """自定义版本号方案，确保没有 .dev 后缀"""
     if version.exact:
