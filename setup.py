@@ -10,13 +10,12 @@ setup(
     description="A collection of functions for Jupyter notebooks",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url="https://github.com/huluxiaohuowa/jupyfuncs",
+    url="https://github.com/your_github_username/jupyfuncs",
     packages=find_packages(),
-    python_requires='>=3.6',
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    include_package_data=True
+    python_requires='>=3.6',
 )
