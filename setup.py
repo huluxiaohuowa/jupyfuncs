@@ -4,9 +4,8 @@ def custom_version_scheme(version):
     """自定义版本号方案，确保没有 .dev 后缀"""
     if version.tag:
         return version.format_with("{tag}")
-    elif version.distance is not None:
-        return f"{version.format_next_version('')}.post{version.distance}"
-    return "0.0.0"
+    else:
+        return version.format_next_version("{tag}.post{distance}")
 
 def custom_local_scheme(version):
     """自定义本地版本方案，确保没有本地版本后缀"""
