@@ -22,10 +22,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install setuptools wheel setuptools_scm
+          pip install setuptools wheel
+          pip install build  # 确保 build 模块安装在此步骤
 
       - name: Build package
-        run: python -m build
+        run: |
+          python -m build
 
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@v1.4.2
