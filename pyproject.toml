@@ -6,4 +6,4 @@ build-backend = "setuptools.build_meta"
 write_to = "jupyfuncs/_version.py"
 local_scheme = "no-local-version"
 version_scheme = "release-branch-semver"
-tag_regex = "^v(\d+\.\d+\.\d+)$"  # 确保标签格式符合语义化版本
+tag_regex = "^v(\\d+\\.\\d+\\.\\d+)$"  # 正确转义反斜杠
