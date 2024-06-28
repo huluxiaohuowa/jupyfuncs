@@ -3,7 +3,7 @@ name: Build and Publish to PyPI
 on:
   push:
     branches:
-      - main  # 确保这匹配你的主分支名
+      - master  # 确保这匹配你的主分支名
 
 jobs:
   build-and-publish:
