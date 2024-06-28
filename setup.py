@@ -8,10 +8,14 @@ def custom_version_scheme(version):
         return f"{base_version}.post{version.distance}"
     return base_version
 
+def custom_local_scheme(version):
+    """自定义本地版本方案，确保没有本地版本后缀"""
+    return ""
+
 setup(
     name="jupyfuncs",
     use_scm_version={
-        "local_scheme": "no-local-version",
+        "local_scheme": custom_local_scheme,
         "version_scheme": custom_version_scheme,
         "write_to": "jupyfuncs/_version.py"
     },
