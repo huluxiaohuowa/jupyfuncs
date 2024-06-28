@@ -1,17 +1,18 @@
 from setuptools import setup, find_packages
+import setuptools_scm
 
-def clean_version(version):
-    """移除本地版本信息（如 `.dev` 后缀）"""
-    base_version = version.tag.base_version if version.tag else '0.0.0'
-    if version.distance:
-        return f"{base_version}.post{version.distance}"
-    return base_version
+def custom_version_scheme(version):
+    """自定义版本号方案，确保没有 .dev 后缀"""
+    if version.tag:
+        return version.format_with("{tag}")
+    else:
+        return "0.0.0"
 
 setup(
     name="jupyfuncs",
     use_scm_version={
         "local_scheme": "no-local-version",
-        "version_scheme": clean_version,
+        "version_scheme": custom_version_scheme,
         "write_to": "jupyfuncs/_version.py"
     },
     author="Jianxing Hu",
