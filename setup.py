@@ -1,15 +1,15 @@
 from setuptools import setup, find_packages
-import setuptools_scm
 
 def custom_version_scheme(version):
-    """自定义版本号方案，确保没有 .dev 后缀"""
-    base_version = version.tag.base_version if version.tag else '0.0.0'
-    if version.distance is not None:
-        return f"{base_version}.post{version.distance}"
-    return base_version
+    """ 自定义版本号方案，确保没有 .dev 后缀 """
+    if version.tag:
+        return version.format_with("{tag}")
+    elif version.distance is not None:
+        return f"{version.format_next_version('')}+{version.node}"
+    return version.format_with("{tag}")
 
 def custom_local_scheme(version):
-    """自定义本地版本方案，确保没有本地版本后缀"""
+    """ 自定义本地版本方案，确保没有本地版本后缀 """
     return ""
 
 setup(
