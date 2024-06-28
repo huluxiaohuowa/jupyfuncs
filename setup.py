@@ -2,6 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="jupyfuncs",
+    use_scm_version=True,  # 简单使用 setuptools_scm
     author="Jianxing Hu",
     author_email="hu.jx@outlook.com",
     description="A collection of functions for Jupyter notebooks",
