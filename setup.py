@@ -7,24 +7,16 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     author="Jianxing Hu",
     author_email="hu.jx@outlook.com",
-    description="jupyfuncs",
-    packages=find_packages(), 
+    description="A collection of functions for Jupyter notebooks",
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
+    url="https://github.com/huluxiaohuowa/jupyfuncs",
+    packages=find_packages(),
     python_requires='>=3.6',
-    data_files=[
-        (
-            'data_file', 
-            [
-                'jupyfuncs/defined_BaseFeatures.fdef',
-                'jupyfuncs/datasets/vocab.txt',
-                'jupyfuncs/datasets/route_template.json'
-            ]
-        ),
-    ],
-    include_package_data=True,
-    install_requires=[],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-    ]
+    ],
+    include_package_data=True
 )
