@@ -1,11 +1,14 @@
 from setuptools import setup, find_packages
+import setuptools_scm
 
 def custom_version_scheme(version):
     """自定义版本号方案，确保没有 .dev 后缀"""
-    if version.tag:
+    if version.exact:
         return version.format_with("{tag}")
+    elif version.distance:
+        return f"{version.format_next_version()}.post{version.distance}"
     else:
-        return version.format_next_version("{tag}.post{distance}")
+        return version.format_with("0.0.0")
 
 def custom_local_scheme(version):
     """自定义本地版本方案，确保没有本地版本后缀"""
