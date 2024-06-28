@@ -23,7 +23,7 @@ setup(
         "write_to": "jupyfuncs/_version.py"
     },
     author="Jianxing Hu",
-    author_email="hu.jx@outlook.com",
+    author_email="j.hu@pku.edu.cn",
     description="A collection of functions for Jupyter notebooks",
     long_description=open('README.md', 'r', encoding='utf-8').read(),
     long_description_content_type='text/markdown',
