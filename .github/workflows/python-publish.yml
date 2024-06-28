@@ -30,7 +30,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install build versioneer
+        pip install build
+        pip install versioneer
     - name: Build package
       run: python -m build
     - name: Publish package
