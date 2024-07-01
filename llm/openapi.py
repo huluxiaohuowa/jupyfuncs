@@ -6,7 +6,7 @@ def chat_oai_stream(
     base_url="http://127.0.0.1:8000/v1",
     api_key="dummy_key",
     model="/data/models/Qwen-7B-Chat-Int4",
-    prompt="",
+    prompt="Who are you?",
     stream=True
 ):
     """Chat with OpenAI's GPT-3 model using the specified parameters.
