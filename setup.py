@@ -29,6 +29,13 @@ setup(
     long_description_content_type='text/markdown',
     url="https://github.com/huluxiaohuowa/jupyfuncs",
     packages=find_packages(),
+    package_data={
+        'jupyfuncs': [
+            'datasets/*.*',
+            'datasets/*/*.*',
+            'defined_BaseFeatures.fdef'
+        ]
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
