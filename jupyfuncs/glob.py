@@ -22,6 +22,15 @@ __all__ = [
 
 
 def recursive_glob(treeroot, pattern):
+    """Recursively searches for files matching a specified pattern starting from the given directory.
+    
+    Args:
+        treeroot (str): The root directory to start the search from.
+        pattern (str): The pattern to match the files against.
+    
+    Returns:
+        list: A list of file paths that match the specified pattern.
+    """
     results = []
     for base, dirs, files in os.walk(treeroot):
         goodfiles = fnmatch.filter(files, pattern)
@@ -46,10 +55,19 @@ def makedirs(path: str, isfile: bool = False) -> None:
 
 
 def get_current_dir():
+    """Return the current directory path."""
     return os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 
 def get_num_lines(file):
+    """Get the number of lines in a file.
+    
+    Args:
+        file (str): The path to the file.
+    
+    Returns:
+        int: The number of lines in the file.
+    """
     num_lines = subprocess.check_output(
         ['wc', '-l', file]
     ).split()[0]
@@ -57,6 +75,16 @@ def get_num_lines(file):
 
 
 def str_from_line(file, line, split=False):
+    """Retrieve a specific line from a file and process it.
+    
+    Args:
+        file (str): The path to the file.
+        line (int): The line number to retrieve (starting from 0).
+        split (bool, optional): If True, split the line by space or tab and return the first element. Defaults to False.
+    
+    Returns:
+        str: The content of the specified line from the file.
+    """
     smi = subprocess.check_output(
         # ['sed','-n', f'{str(i+1)}p', file]
         ["sed", f"{str(line + 1)}q;d", file]
@@ -73,6 +101,15 @@ def splitted_strs_from_line(
     file: str,
     idx: int
 ) -> t.List:
+    """Return a list of strings obtained by splitting the line at the specified index from the given file.
+    
+        Args:
+            file (str): The file path.
+            idx (int): The index of the line to split.
+    
+        Returns:
+            List: A list of strings obtained by splitting the line at the specified index.
+    """
     return str_from_line(file, idx).split()
 
 
@@ -202,6 +239,14 @@ def parallel_apply_line_by_line(
 
 
 def get_func_from_dir(score_dir: str) -> t.Tuple[t.Callable, str]:
+    """Get function and mode from directory.
+    
+    Args:
+        score_dir (str): The directory path containing the function file.
+        
+    Returns:
+        Tuple[Callable, str]: A tuple containing the main function and the mode.
+    """
     if score_dir.endswith('.py'):
         func_dir = pathlib.Path(score_dir).parent.resolve()
         file_name = pathlib.Path(score_dir).stem

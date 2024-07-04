@@ -22,11 +22,21 @@ NO_WHITE = HTML("""
 
 
 def in_jupyter():
+    """Check if the code is running in a Jupyter notebook.
+    
+        Returns:
+            bool: True if running in Jupyter notebook, False otherwise.
+    """
 
     which = True if 'ipykernel_launcher.py' in sys.argv[0] else False
     return which
 
 def in_docker():
+    """Check if the code is running inside a Docker container.
+    
+        Returns:
+            bool: True if running inside a Docker container, False otherwise.
+    """
     return osp.exists('/.dockerenv')
 
 

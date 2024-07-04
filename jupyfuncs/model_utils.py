@@ -9,6 +9,15 @@ def save_model(
     optimizer=None,
     loss=None,
 ):
+    """Save the model and related training information to a specified directory.
+    
+    Args:
+        model: The model to be saved.
+        save_dir: The directory where the model will be saved.
+        epoch (int): The current epoch number (default is 0).
+        optimizer: The optimizer used for training (default is None).
+        loss: The loss value (default is None).
+    """
     if isinstance(model, nn.DataParallel):
         state_dict = model.module.state_dict()
     else:
@@ -36,6 +45,18 @@ def load_model(
     optimizer=None,
     train=False,
 ):
+    """Load a saved model from the specified directory.
+    
+    Args:
+        save_dir (str): The directory where the model checkpoint is saved.
+        model_class (torch.nn.Module, optional): The class of the model to be loaded. Defaults to None.
+        model (torch.nn.Module, optional): The model to load the state_dict into. Defaults to None.
+        optimizer (torch.optim.Optimizer, optional): The optimizer to load the state_dict into. Defaults to None.
+        train (bool, optional): Whether to set the model to training mode. Defaults to False.
+    
+    Returns:
+        tuple: A tuple containing the loaded model, optimizer, epoch, and loss.
+    """
     # from .model_dict import MODEL_DICT
     checkpoint = torch.load(save_dir)
     if model is None:
