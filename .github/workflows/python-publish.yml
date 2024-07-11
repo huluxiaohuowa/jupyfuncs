@@ -27,6 +27,10 @@ jobs:
       - name: Build package and wheel
         run: |
           python -m build --wheel
+      
+      - name: List built packages
+        run: |
+          ls -l ./dist
 
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@v1.4.2
