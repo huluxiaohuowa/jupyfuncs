@@ -35,6 +35,7 @@ jobs:
           password: ${{ secrets.PYPI_API_TOKEN }}
 
       - name: Create GitHub Release
+        id: create_release  # 这里添加 id 以便于引用输出
         uses: actions/create-release@v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,13 +45,13 @@ jobs:
           body: "Description of the release"
           draft: false
           prerelease: false
-
+  
       - name: Upload wheel to GitHub Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  # 确保正确引用 upload_url
           asset_path: ./dist/*.whl
           asset_name: your_package_name-${{ github.ref_name }}.whl
           asset_content_type: application/octet-stream
