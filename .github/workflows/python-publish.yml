@@ -29,8 +29,7 @@ jobs:
           python -m build --wheel
       
       - name: Find wheel file
-        run: echo "WHEEL_FILE=$(ls ./dist/*.whl)" >> $GITHUB_ENV
-
+        run: run: echo "WHEEL_FILE=$(basename $(ls ./dist/*.whl))" >> $GITHUB_ENV
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
