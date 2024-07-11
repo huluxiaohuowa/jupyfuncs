@@ -2,10 +2,10 @@ name: Build and Publish to PyPI
 
 on:
   push:
-    branches:
-      - master # 确保这匹配你的主分支名
-    # tags:
-    #   - '*'  # 监听所有标签推送
+    # branches:
+    #   - master # 确保这匹配你的主分支名
+    tags:
+      - '*'  # 监听所有标签推送
 
 jobs:
   build-and-publish:
@@ -37,13 +37,18 @@ jobs:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
       
-      - name: Extract tag name and Debug
+      - name: Check if it's a tag push and Extract tag name
         run: |
-          TAG_NAME="${GITHUB_REF#refs/tags/}"
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-          echo "Extracted TAG_NAME: $TAG_NAME"
-    
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            TAG_NAME="${GITHUB_REF#refs/tags/}"
+            echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+            echo "Extracted TAG_NAME: $TAG_NAME"
+          else
+            echo "Not a tag push, skipping..."
+          fi
+  
       - name: Create GitHub Release
+        if: env.TAG_NAME != ''
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
