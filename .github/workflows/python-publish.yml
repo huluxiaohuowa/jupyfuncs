@@ -28,9 +28,8 @@ jobs:
         run: |
           python -m build --wheel
       
-      - name: List built packages
-        run: |
-          ls -l ./dist
+      - name: Find wheel file
+        run: echo "WHEEL_FILE=$(ls ./dist/*.whl)" >> $GITHUB_ENV
 
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@v1.4.2
@@ -55,7 +54,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}  # 确保正确引用 upload_url
-          asset_path: ./dist/*.whl
-          asset_name: your_package_name-${{ github.ref_name }}.whl
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/${{ env.WHEEL_FILE }}
+          asset_name: ${{ env.WHEEL_FILE }}
           asset_content_type: application/octet-stream
