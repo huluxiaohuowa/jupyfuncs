@@ -26,13 +26,10 @@ jobs:
 
       - name: Build package and wheel
         run: |
-          python -m build --sdist --wheel --outdir dist/
-
+          python -m build --wheel
+      
       - name: Find wheel file
-        run: |
-          echo "WHEEL_FILE=$(basename $(ls ./dist/*.whl))" >> $GITHUB_ENV
-          echo "GZ_FILE=$(basename $(ls ./dist/*.tar.gz))" >> $GITHUB_ENV
-          echo "ZIP_FILE=$(basename $(ls ./dist/*.zip))" >> $GITHUB_ENV
+        run: echo "WHEEL_FILE=$(basename $(ls ./dist/*.whl))" >> $GITHUB_ENV
 
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@v1.4.2
@@ -61,23 +58,3 @@ jobs:
           asset_path: ./dist/${{ env.WHEEL_FILE }}
           asset_name: ${{ env.WHEEL_FILE }}
           asset_content_type: application/octet-stream
-
-      - name: Upload source code zip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/${{ env.ZIP_FILE }} 
-          asset_name: ${{ env.ZIP_FILE }} 
-          asset_content_type: application/zip
-  
-      - name: Upload source code tar.gz
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/${{ env.GZ_FILE }} 
-          asset_name: ${{ env.GZ_FILE }} 
-          asset_content_type: application/gzip
