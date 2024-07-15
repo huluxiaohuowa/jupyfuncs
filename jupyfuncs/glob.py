@@ -14,11 +14,23 @@ import subprocess
 
 import multiprocess as mp
 
-__all__ = [
-    'recursive_glob',
-    'makedirs',
-    'get_current_dir',
-]
+import importlib.resources as pkg_resources
+import json
+
+
+def get_dataset_file(filename):
+    """Get dataset file.
+    
+    Args:
+        filename (str): The name of the dataset file.
+    
+    Returns:
+        dict: The data loaded from the dataset file.
+    """
+    with pkg_resources.path('jupyfuncs.datasets', filename) as file_path:
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+    return data
 
 
 def recursive_glob(treeroot, pattern):
