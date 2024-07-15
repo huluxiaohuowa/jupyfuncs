@@ -1,2 +1,4 @@
-include versioneer.py
 include jupyfuncs/_version.py
+include jupyfuncs/datasets/*.json
+include jupyfuncs/datasets/*.txt
+include jupyfuncs/datasets/*.tsv
