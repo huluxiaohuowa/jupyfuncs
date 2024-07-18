@@ -19,6 +19,26 @@ import importlib.resources as pkg_resources
 import json
 
 
+def in_jupyter():
+    """Check if the code is running in a Jupyter notebook.
+    
+        Returns:
+            bool: True if running in Jupyter notebook, False otherwise.
+    """
+
+    which = True if 'ipykernel_launcher.py' in sys.argv[0] else False
+    return which
+
+
+def in_docker():
+    """Check if the code is running inside a Docker container.
+    
+        Returns:
+            bool: True if running inside a Docker container, False otherwise.
+    """
+    return osp.exists('/.dockerenv')
+
+
 def get_files(dir_path):
     """Get a list of files with specific file extensions in the given directory path.
     
