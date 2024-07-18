@@ -274,6 +274,8 @@ def show_pharmacophore(
     keep=keep,
     fdf_dir=os.path.join(
         os.path.dirname(__file__),
+        "..",
+        "datasets",
         'defined_BaseFeatures.fdef'
     )
 ):

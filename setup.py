@@ -42,7 +42,6 @@ setup(
         'jupyfuncs': [
             'datasets/*.*',
             'datasets/*/*.*',
-            'defined_BaseFeatures.fdef'
         ]
     },
     classifiers=[
