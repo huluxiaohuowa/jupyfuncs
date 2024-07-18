@@ -5,7 +5,7 @@ import pubchempy as pcp
 import molvs as mv
 from psycopg import sql
 
-from jupyfuncs.sql import connect_by_infofile
+from .pg import connect_by_infofile
 
 
 def query_from_cir(query_name: str):

@@ -11,11 +11,37 @@ import pathlib
 import sys
 import importlib
 import subprocess
+import re
 
 import multiprocess as mp
 
 import importlib.resources as pkg_resources
 import json
+
+
+def get_files(dir_path):
+    """Get a list of files with specific file extensions in the given directory path.
+    
+    Args:
+        dir_path (str): The path to the target directory.
+    
+    Returns:
+        list: A list of absolute file paths that have file extensions such as .md, .doc, .docx, .pdf, .csv, or .txt.
+    """
+    # args：dir_path，目标文件夹路径
+    file_list = []
+    for filepath, dirnames, filenames in os.walk(dir_path):
+        # os.walk 函数将递归遍历指定文件夹
+        filenames = [f for f in filenames if not f[0] == '.']
+        dirnames[:] = [d for d in dirnames if not d[0] == '.'] 
+        for filename in filenames:
+            # 通过后缀名判断文件类型是否满足要求
+            if filename.endswith((
+                ".md", ".doc", ".docx", ".pdf", ".csv", "txt"
+            )):
+                # 如果满足要求，将其绝对路径加入到结果列表
+                file_list.append(os.path.join(filepath, filename))
+    return file_list
 
 
 def get_dataset_file(filename):
@@ -86,43 +112,6 @@ def get_num_lines(file):
     return int(num_lines)
 
 
-def str_from_line(file, line, split=False):
-    """Retrieve a specific line from a file and process it.
-    
-    Args:
-        file (str): The path to the file.
-        line (int): The line number to retrieve (starting from 0).
-        split (bool, optional): If True, split the line by space or tab and return the first element. Defaults to False.
-    
-    Returns:
-        str: The content of the specified line from the file.
-    """
-    smi = subprocess.check_output(
-        # ['sed','-n', f'{str(i+1)}p', file]
-        ["sed", f"{str(line + 1)}q;d", file]
-    )
-    if isinstance(smi, bytes):
-        smi = smi.decode().strip()
-    if split:
-        if ' ' or '\t' in smi:
-            smi = smi.split()[0]
-    return smi
-
-
-def splitted_strs_from_line(
-    file: str,
-    idx: int
-) -> t.List:
-    """Return a list of strings obtained by splitting the line at the specified index from the given file.
-    
-        Args:
-            file (str): The file path.
-            idx (int): The index of the line to split.
-    
-        Returns:
-            List: A list of strings obtained by splitting the line at the specified index.
-    """
-    return str_from_line(file, idx).split()
 
 
 def chunkify_file(
