@@ -9,7 +9,6 @@ from spire.doc.common import *
 #     get_current_dir,
 #     get_files
 # )
-from ..show.plot import is_within_bbox
 
 
 class DocExtractor():
