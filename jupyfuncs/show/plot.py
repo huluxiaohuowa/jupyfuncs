@@ -9,7 +9,8 @@ import matplotlib
 import numpy as np
 import pandas as pd
 
-from .glob import get_num_lines, splitted_strs_from_line 
+from ..path.glob import get_num_lines
+from ..path.strings import splitted_strs_from_line 
 
 cm = matplotlib.cm.get_cmap('tab20')
 colors = cm.colors
@@ -256,8 +257,3 @@ def get_metrics_bars(
     plt.show()
 
 
-def is_within_bbox(
-    bbox1, bbox2
-):
-    """Check if bbox1 is within bbox2."""
-    return bbox1[0] >= bbox2[0] and bbox1[1] >= bbox2[1] and bbox1[2] <= bbox2[2] and bbox1[3] <= bbox2[3]

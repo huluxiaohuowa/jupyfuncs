@@ -45,6 +45,13 @@ class DocExtractor():
     ) -> str:
         return pytesseract.image_to_string(image, lang=self.lang)
 
+    @staticmethod
+    def is_within_bbox(
+        bbox1, bbox2
+    ):
+        """Check if bbox1 is within bbox2."""
+        return bbox1[0] >= bbox2[0] and bbox1[1] >= bbox2[1] and bbox1[2] <= bbox2[2] and bbox1[3] <= bbox2[3]
+
     def text_tables_from_pdf(
         self,
         pdf_path,
@@ -74,7 +81,7 @@ class DocExtractor():
                 non_table_text = []
                 for char in page.chars:
                     char_bbox = (char['x0'], char['top'], char['x1'], char['bottom'])
-                    if not any(is_within_bbox(char_bbox, table_bbox) for table_bbox in table_bboxes):
+                    if not any(self.is_within_bbox(char_bbox, table_bbox) for table_bbox in table_bboxes):
                         non_table_text.append(char['text'])
                 remaining_text = ''.join(non_table_text).strip()
                 if remaining_text:
