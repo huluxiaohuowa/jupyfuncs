@@ -3,7 +3,8 @@ import pytesseract
 from PIL import Image
 import pandas as pd
 import io
-
+from spire.doc import Document
+from spire.doc.common import *
 # from ..path.glob import (
 #     get_current_dir,
 #     get_files
@@ -19,9 +20,27 @@ class DocExtractor():
     ) -> None:
         self.doc_files = doc_files
         self.lang = lang
+
+    @classmethod
+    def text_from_doc(
+        doc_path
+    ):
+        document = Document()
+        # Load a Word document
+        document.LoadFromFile(doc_path)
+        document_text = document.GetText()
+        return document_text
     
+    @staticmethod
+    def text_from_plain(
+        txt_path
+    ):
+        with open(txt_path, "r") as f:
+            text = f.read()
+        return text
+    
+    @staticmethod
     def extract_text_from_image(
-        self,
         image: Image.Image,
     ) -> str:
         return pytesseract.image_to_string(image, lang=self.lang)
