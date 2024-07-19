@@ -39,7 +39,10 @@ def in_docker():
     return osp.exists('/.dockerenv')
 
 
-def get_files(dir_path):
+def get_files(
+    dir_path,
+    file_types: list = ["txt"]
+):
     """Get a list of files with specific file extensions in the given directory path.
     
     Args:
@@ -56,9 +59,7 @@ def get_files(dir_path):
         dirnames[:] = [d for d in dirnames if not d[0] == '.'] 
         for filename in filenames:
             # 通过后缀名判断文件类型是否满足要求
-            if filename.endswith((
-                ".md", ".doc", ".docx", ".pdf", ".csv", "txt"
-            )):
+            if filename.endswith(file_types):
                 # 如果满足要求，将其绝对路径加入到结果列表
                 file_list.append(os.path.join(filepath, filename))
     return file_list
