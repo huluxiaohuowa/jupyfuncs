@@ -2,18 +2,28 @@ import re
 import subprocess
 
 
-def get_n_tokens(paragraph):
-    """Return the number of tokens in a paragraph after removing CJK characters.
+def get_n_tokens(
+    paragraph,
+    model: str = None
+):
+    """Get the number of tokens in a paragraph using a specified model.
     
-        Args:
-            paragraph (str): The input paragraph containing CJK characters.
+    Args:
+        paragraph (str): The input paragraph to tokenize.
+        model (str): The name of the model to use for tokenization. If None, a default CJK tokenization will be used.
     
-        Returns:
-            int: The number of tokens in the paragraph after removing CJK characters.
+    Returns:
+        int: The number of tokens in the paragraph based on the specified model or default CJK tokenization.
     """
-    cjkReg = re.compile(u'[\u1100-\uFFFDh]+?')
-    trimedCJK = cjkReg.sub( ' a ', paragraph, 0)
-    return len(trimedCJK.split())
+    if model is None:
+        cjk_regex = re.compile(u'[\u1100-\uFFFDh]+?')
+        trimed_cjk = cjk_regex.sub( ' a ', paragraph, 0)
+        return len(trimed_cjk.split())
+    else:
+        import tiktoken
+        encoding = tiktoken.encoding_for_model(model)
+        num_tokens = len(encoding.encode(paragraph))
+        return num_tokens
 
 
 def str_from_line(file, line, split=False):
