@@ -42,7 +42,7 @@ def str_from_line(file, line, split=False):
 def splitted_strs_from_line(
     file: str,
     idx: int
-) -> t.List:
+) -> list:
     """Return a list of strings obtained by splitting the line at the specified index from the given file.
     
         Args:
