@@ -7,6 +7,8 @@ def chat_oai_stream(
     api_key="dummy_key",
     model="/data/models/Qwen-7B-Chat-Int4",
     prompt="Who are you?",
+    *args,
+    **kwargs
 ):
     """Chat with OpenAI's GPT-3 model using the specified parameters.
     
@@ -30,7 +32,9 @@ def chat_oai_stream(
             "role": "user",
             "content": prompt
         }],
-        stream=True
+        stream=True,
+        *args,
+        **kwargs
     )
     
     for chunk in response:
@@ -65,7 +69,9 @@ def chat_oai_invoke(
             "role": "user",
             "content": prompt
         }],
-        stream=False
+        stream=False,
+        *args,
+        **kwargs
     )
     
     return response.choices[0].message.content
