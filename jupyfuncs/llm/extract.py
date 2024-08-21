@@ -29,7 +29,7 @@ class DocExtractor():
         document.LoadFromFile(doc_path)
         document_text = document.GetText()
         return document_text
-    
+
     @staticmethod
     def text_from_plain(
         txt_path
@@ -37,7 +37,7 @@ class DocExtractor():
         with open(txt_path, "r") as f:
             text = f.read()
         return text
-    
+
     @staticmethod
     def extract_text_from_image(
         image: Image.Image,
@@ -72,7 +72,7 @@ class DocExtractor():
                             df = pd.DataFrame(table_data[1:], columns=table_data[0])
                             df['Page'] = page_number + 1  # 添加页码信息
                             all_tables.append(df)
-                
+
                 # Get bounding boxes for tables
                 table_bboxes = [table.bbox for table in tables]
 
@@ -94,23 +94,23 @@ class DocExtractor():
                             if x0 < 0 or top < 0 or x1 > page.width or bottom > page.height:
                                 print(f"Skipping image with invalid bounds on page {page_number + 1}")
                                 continue
-                            
+
                             cropped_image = page.within_bbox((x0, top, x1, bottom)).to_image()
                             img_bytes = io.BytesIO()
                             cropped_image.save(img_bytes, format='PNG')
                             img_bytes.seek(0)
                             pil_image = Image.open(img_bytes)
-                            
+
                             ocr_text = self.extract_text_from_image(pil_image, lang=self.lang)
-                            
+
                             table = [line.split() for line in ocr_text.split('\n') if line.strip()]
-                            
+
                             if table:
                                 num_columns = max(len(row) for row in table)
                                 for row in table:
                                     if len(row) != num_columns:
                                         row.extend([''] * (num_columns - len(row)))
-                                
+
                                 df = pd.DataFrame(table[1:], columns=table[0])
                                 df['Page'] = page_number + 1
                                 all_tables.append(df)
@@ -121,5 +121,3 @@ class DocExtractor():
             return all_texts, all_tables
         else:
             return all_texts, [pd.DataFrame()]
-
-    
